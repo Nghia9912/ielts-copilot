@@ -1,0 +1,106 @@
+{
+  "task_type": "task2",
+  "rubric_version": "ielts-writing-v1",
+  "model_name": "qwen3:8b",
+  "preprocessing": {
+    "word_count": 220,
+    "min_words_required": 250,
+    "is_underlength": true,
+    "paragraph_count": 4,
+    "sentence_count": 11
+  },
+  "estimated_overall": 6.0,
+  "criteria": {
+    "task_response": {
+      "estimated_band": 6.0,
+      "strengths": [
+        "Clear presentation of both views with balanced arguments",
+        "Well-structured introduction and conclusion"
+      ],
+      "evidence": [
+        {
+          "quote": "While some argue that mandatory attendance instills discipline, I firmly believe that university students are adults who should have the freedom to manage their own learning schedules.",
+          "issue": "Underlength penalty applies due to word count (220 words < 250 required).",
+          "suggestion": "Expand arguments with additional examples or deeper analysis.",
+          "quote_verified": true
+        }
+      ]
+    },
+    "coherence_cohesion": {
+      "estimated_band": 6.5,
+      "strengths": [
+        "Logical flow between paragraphs",
+        "Use of transition words (e.g., 'On the one hand', 'In conclusion')"
+      ],
+      "evidence": [
+        {
+          "quote": "Without a strict attendance policy, many young undergraduates might procrastinate and fall behind in their studies, which ultimately lead to higher dropout rates.",
+          "issue": "Awkward phrasing and missing article ('a' before 'strict attendance policy').",
+          "suggestion": "Revise to 'Without a strict attendance policy, many young undergraduates might procrastinate and fall behind in their studies, which could lead to higher dropout rates.'",
+          "quote_verified": true
+        }
+      ]
+    },
+    "lexical_resource": {
+      "estimated_band": 6.0,
+      "strengths": [
+        "Use of academic vocabulary (e.g., 'procrastinate', 'clarify doubts')"
+      ],
+      "evidence": [
+        {
+          "quote": "which ultimately lead to higher dropout rates",
+          "error_code": "SVA",
+          "issue": "Subject-verb agreement error ('lead' should be 'leads').",
+          "suggestion": "Correct to 'which ultimately leads to higher dropout rates.'",
+          "quote_verified": true
+        },
+        {
+          "quote": "students can study effectively at their own pace",
+          "error_code": "WORD_CHOICE",
+          "issue": "Redundant phrasing ('at their own pace' is repetitive with 'manage their own learning schedules').",
+          "suggestion": "Revise to 'students can study effectively according to their own schedules.'",
+          "quote_verified": true
+        }
+      ]
+    },
+    "grammatical_range_accuracy": {
+      "estimated_band": 6.0,
+      "strengths": [
+        "Use of complex sentence structures (e.g., 'While some argue...')"
+      ],
+      "evidence": [
+        {
+          "quote": "forcing reluctant students to sit in a lecture hall does not guarantee active learning; instead, universities should evaluate students based on their assignments and final examination performance.",
+          "error_code": "PUNCTUATION",
+          "issue": "Incorrect semicolon usage between independent clauses.",
+          "suggestion": "Replace with a period or use a comma with a conjunction: 'forcing reluctant students to sit in a lecture hall does not guarantee active learning. Instead, universities should evaluate students based on their assignments and final examination performance.'",
+          "quote_verified": true
+        }
+      ]
+    }
+  },
+  "priority_actions": [
+    "Expand essay to meet 250-word minimum",
+    "Correct subject-verb agreement errors",
+    "Revise redundant phrasing for conciseness",
+    "Improve punctuation for complex sentences"
+  ],
+  "uncertainties": [
+    "The underlength penalty may reduce Task Response band by 0.5",
+    "Some lexical choices could be more precise for higher band scores",
+    "Bài viết chỉ có 220/250 từ (thiếu độ dài tối thiểu)."
+  ],
+  "validation_summary": {
+    "total_quotes_checked": 5,
+    "verified_quotes": 5,
+    "unverified_quotes": 0,
+    "all_quotes_verified": true
+  },
+  "teacher_review_required": true,
+  "benchmark": {
+    "elapsed_seconds": 85.07,
+    "prompt_eval_tokens": 650,
+    "output_tokens": 1510,
+    "tokens_per_second": 34.84
+  }
+}

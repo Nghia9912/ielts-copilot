@@ -1,0 +1,3040 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IELTS Copilot — Local Teaching Assistant</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-alt: #f1f5f9;
+      --surface-subtle: #f8fafc;
+      --surface-hover: #f1f5f9;
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: rgba(37, 99, 235, 0.08);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.1);
+      --warning: #d97706;
+      --warning-soft: rgba(217, 119, 6, 0.1);
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.08);
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0f19;
+      --panel: #111827;
+      --panel-alt: #1e293b;
+      --surface-subtle: #0f172a;
+      --surface-hover: #1e293b;
+      --text: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-soft: rgba(59, 130, 246, 0.14);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.14);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.14);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.14);
+      --border: #1e293b;
+      --border-strong: #334155;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 56px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 58px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand h1::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--panel-alt);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .tab-btn {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.84rem;
+      transition: all 0.12s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      background: var(--panel);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .container { max-width: 1440px; margin: 20px auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1.12fr; gap: 20px; align-items: start; }
+    .row-3 { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card h2 {
+      font-size: 0.96rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h3 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    input[type="text"], input[type="number"], input[type="file"], select, textarea {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 8px 11px;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      margin-bottom: 12px;
+      font-family: inherit;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-soft);
+      background: var(--panel);
+    }
+    textarea { resize: vertical; line-height: 1.5; }
+
+    .badge {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--panel-alt);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .badge.online {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: rgba(5, 150, 105, 0.25);
+    }
+    .badge.assumed {
+      background: var(--warning-soft);
+      color: var(--warning);
+      border-color: rgba(217, 119, 6, 0.25);
+    }
+    .badge.explicit {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: rgba(5, 150, 105, 0.25);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid transparent;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.84rem;
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--panel);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-strong);
+    }
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+      border-color: var(--muted);
+    }
+    .btn-success { background: var(--success); color: #ffffff; }
+    .btn-success:hover { filter: brightness(0.95); }
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+    .btn-danger:hover { background: var(--danger); color: #ffffff; }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+
+    .score-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px; }
+    .score-box {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .score-box.overall { border-color: var(--primary); background: var(--primary-soft); }
+    .score-box .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .score-box .val { font-size: 1.4rem; font-weight: 700; margin-top: 2px; color: var(--text); }
+    .score-box.overall .val { color: var(--primary); }
+
+    .essay-preview {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      white-space: pre-wrap;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      max-height: 460px;
+      overflow-y: auto;
+      color: var(--text);
+    }
+    mark.hl {
+      background: var(--warning-soft);
+      color: var(--text);
+      padding: 2px 4px;
+      border-radius: 4px;
+      border-bottom: 2px solid var(--warning);
+      font-weight: 600;
+    }
+
+    .crit-section { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+    .crit-title {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .ev-item {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--warning);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      transition: background-color 0.12s ease;
+    }
+    .ev-item:hover { background: var(--surface-hover); }
+    .ev-quote { font-style: italic; color: var(--text-secondary); margin-bottom: 4px; font-weight: 500; }
+    .ev-fix { color: var(--success); font-weight: 600; margin-top: 4px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      background: var(--surface-subtle);
+    }
+    tbody tr:hover { background: var(--surface-hover); }
+
+    #studioStageBar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    #studioStageBar .tab-btn {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #studioStageBar .tab-btn:hover { border-color: var(--border-strong); color: var(--text); }
+    #studioStageBar .tab-btn.active {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: none;
+    }
+
+    details.ui-accordion {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 0.12s ease;
+    }
+    details.ui-accordion[open] {
+      background: var(--panel);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-sm);
+    }
+    details.ui-accordion > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      user-select: none;
+      background: var(--surface-subtle);
+    }
+    details.ui-accordion > summary::-webkit-details-marker { display: none; }
+    details.ui-accordion > summary:hover { background: var(--surface-hover); }
+    .acc-body { padding: 16px; border-top: 1px solid var(--border); background: var(--panel); }
+    .meta-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+    .info-block {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 0.83rem;
+    }
+    .info-block b {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    #uiToast {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      background: var(--text);
+      color: var(--bg);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    #uiToast.show { opacity: 1; transform: translateY(0); }
+    .hidden { display: none !important; }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>IELTS Copilot</h1>
+      <span class="badge">Offline Local Assistant · F:\ielts-copilot</span>
+      <span id="ollamaStatus" class="badge">Đang kiểm tra Ollama...</span>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('writing')">1. Writing Lab</button>
+      <button class="tab-btn" onclick="switchTab('speaking')">2. Speaking Lab (Whisper + Audio)</button>
+      <button class="tab-btn" onclick="switchTab('students')">3. Student Records</button>
+      <button class="tab-btn" style="border:1px solid var(--primary); color:var(--primary);" onclick="switchTab('studio')">4. Teaching Studio</button>
+      <button class="tab-btn" style="color:var(--success);" onclick="triggerBackup()">Sao lưu DB</button>
+      <button class="tab-btn" id="themeToggleBtn" onclick="toggleUiTheme()">Giao diện: Sáng</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- TAB 1: WRITING LAB -->
+    <div id="tab-writing" class="grid-2">
+      <div>
+        <div class="card">
+          <h2>
+            <span>1. Nhập bài IELTS Writing</span>
+            <span id="wordCountBadge" class="badge">0 từ (Tối thiểu: 250)</span>
+          </h2>
+          <div class="row-3">
+            <div>
+              <label>Học viên</label>
+              <select id="studentSelect"></select>
+            </div>
+            <div>
+              <label>Loại bài (Task)</label>
+              <select id="taskTypeSelect" onchange="updateWordCount()">
+                <option value="task2">Writing Task 2 (≥250 từ)</option>
+                <option value="task1">Writing Task 1 (≥150 từ)</option>
+              </select>
+            </div>
+            <div>
+              <label>Model AI (Local)</label>
+              <select id="modelSelect">
+                <option value="qwen3:8b">qwen3:8b (Khuyên dùng)</option>
+                <option value="gemma3:4b">gemma3:4b (Nhanh/Nhẹ)</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Đề bài (Prompt)</label>
+          <textarea id="promptInput" rows="3" placeholder="Dán đề bài IELTS Writing vào đây..."></textarea>
+
+          <!-- KHUNG TRÍCH XUẤT SỐ LIỆU BIỂU ĐỒ TASK 1 BẰNG VISION AI -->
+          <div id="task1ChartBox" class="hidden" style="background:var(--surface-subtle); border:1px dashed var(--primary); border-radius:10px; padding:12px; margin-bottom:14px;">
+            <label style="color:var(--primary);">📊 Đối chiếu Biểu đồ Writing Task 1 (Tải ảnh biểu đồ để AI Vision trích xuất số liệu chuẩn hoặc tự nhập bảng số liệu):</label>
+            <div style="display:flex; gap:10px; align-items:center; margin-top:6px; margin-bottom:8px;">
+              <input type="file" id="task1ImageFile" accept=".png,.jpg,.jpeg,.webp" style="margin:0; flex:1;" />
+              <button id="extractChartBtn" class="btn btn-secondary" style="border:1px solid var(--primary); color:var(--primary);" onclick="extractTask1Chart()">👁 Đọc số liệu từ Ảnh (gemma3:4b)</button>
+            </div>
+            <textarea id="task1ChartDataInput" rows="3" style="margin:0;" placeholder="Số liệu trích xuất từ biểu đồ (Chart Reference Data) sẽ hiện tại đây để đối chiếu khi chấm Task 1..."></textarea>
+          </div>
+
+          <label>Bài làm của học viên</label>
+          <textarea id="essayInput" rows="11" oninput="updateWordCount()" placeholder="Dán bài viết của học viên vào đây..."></textarea>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <label style="display:flex; align-items:center; gap:8px; margin:0; cursor:pointer;">
+              <input type="checkbox" id="thinkToggle" style="width:auto; margin:0;" />
+              <span>Bật Deep Thinking</span>
+            </label>
+            <button id="assessBtn" class="btn" onclick="submitAndAssessWriting()">Chấm Writing ngay</button>
+          </div>
+        </div>
+
+        <div id="essayHighlightCard" class="card hidden">
+          <h2>
+            <span>Bài gốc & Đối chiếu Trích dẫn (Bấm vào lỗi bên phải để tô sáng câu)</span>
+            <button class="btn btn-secondary" style="padding:4px 10px; font-size:0.78rem;" onclick="clearHighlight('essayPreviewBox', currentEssayRaw)">Bỏ tô sáng</button>
+          </h2>
+          <div id="essayPreviewBox" class="essay-preview"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>
+            <span>2. Kết quả Phân tích Writing & Kiểm duyệt của Giáo viên</span>
+            <span id="rubricBadge" class="badge">Chưa có dữ liệu</span>
+          </h2>
+          <div id="emptyAssessmentState" style="color:var(--muted); padding:30px 0; text-align:center;">
+            Hãy nhập bài viết bên trái và bấm <b>Chấm Writing ngay</b>, hoặc chọn một bài đã chấm từ tab <b>Student Records</b>.
+          </div>
+          <div id="assessmentResultBox" class="hidden">
+            <div class="score-grid">
+              <div class="score-box"><div class="label">Task Resp</div><div id="scTR" class="val">-</div></div>
+              <div class="score-box"><div class="label">Coherence</div><div id="scCC" class="val">-</div></div>
+              <div class="score-box"><div class="label">Lexical</div><div id="scLR" class="val">-</div></div>
+              <div class="score-box"><div class="label">Grammar</div><div id="scGRA" class="val">-</div></div>
+              <div class="score-box overall"><div class="label">AI Overall</div><div id="scOverall" class="val">-</div></div>
+            </div>
+            <div id="validationBanner" style="margin-bottom:14px; font-size:0.84rem; padding:8px 12px; border-radius:8px; background:var(--surface-subtle); border:1px solid var(--border);"></div>
+            <div style="background:var(--surface-subtle); border:1px solid var(--primary); border-radius:10px; padding:14px; margin-bottom:16px;">
+              <div style="font-weight:700; color:var(--primary); margin-bottom:10px;">Chốt điểm của Giáo viên (Teacher Review)</div>
+              <div class="row-3" style="grid-template-columns: 1fr 2fr auto; align-items:end;">
+                <div>
+                  <label>Band Giáo viên chốt</label>
+                  <input type="number" id="teacherBandInput" step="0.5" min="0" max="9" value="7.0" style="margin:0;" />
+                </div>
+                <div>
+                  <label>Nhận xét của Giáo viên</label>
+                  <input type="text" id="teacherFeedbackInput" placeholder="Nhận xét tổng kết của giáo viên..." style="margin:0;" />
+                </div>
+                <button class="btn btn-success" onclick="saveTeacherReview('writing')">Lưu Duyệt</button>
+              </div>
+              <div id="reviewSavedMsg" style="color:var(--success); font-size:0.82rem; margin-top:8px;" class="hidden"></div>
+            </div>
+            <div id="criteriaDetailsBox"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: SPEAKING LAB -->
+    <div id="tab-speaking" class="grid-2 hidden">
+      <div>
+        <div class="card">
+          <h2>
+            <span>1. Nhập File Ghi âm hoặc Tạo Bài Speaking</span>
+            <button class="btn btn-secondary" style="padding:5px 12px; font-size:0.8rem;" onclick="loadSampleSpeaking()">+ Nạp bài Speaking mẫu (Test nhanh)</button>
+          </h2>
+          <div class="row-3">
+            <div>
+              <label>Học viên</label>
+              <select id="spkStudentSelect"></select>
+            </div>
+            <div>
+              <label>Phần thi (Part)</label>
+              <select id="spkPartSelect">
+                <option value="part2">Speaking Part 2 (Cue Card 1-2 phút)</option>
+                <option value="part1">Speaking Part 1 (Interview)</option>
+                <option value="part3">Speaking Part 3 (Discussion)</option>
+              </select>
+            </div>
+            <div>
+              <label>Whisper Model (Offline)</label>
+              <select id="whisperModelSelect">
+                <option value="small.en">Whisper small.en (Khuyên dùng)</option>
+                <option value="base.en">Whisper base.en (Siêu nhanh)</option>
+                <option value="medium.en">Whisper medium.en (Chính xác cao)</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Câu hỏi / Cue Card (Prompt)</label>
+          <textarea id="spkPromptInput" rows="2" placeholder="VD: Describe a book you have recently read. You should say: what kind of book it is, what it is about..."></textarea>
+
+          <!-- KHU VỰC UPLOAD AUDIO HOẶC THU ÂM MICRO -->
+          <div style="background:var(--surface-subtle); border:1px dashed var(--border); border-radius:10px; padding:14px; margin-bottom:14px;">
+            <label style="color:var(--primary);">Bước A: Chọn file ghi âm (.mp3, .wav, .m4a, .webm ≤ 50MB) hoặc Thu âm trực tiếp</label>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+              <input type="file" id="spkAudioFile" accept=".mp3,.wav,.m4a,.webm,.ogg" style="margin:0; flex:1;" />
+              <button id="recBtn" class="btn btn-secondary" onclick="toggleMicRecording()">🎙 Thu Micro</button>
+              <button id="zoomRecBtn" class="btn btn-secondary" style="border:1px solid var(--primary); color:var(--primary);" onclick="toggleZoomAudioRecording()">💻 Thu tiếng Học viên từ Zoom</button>
+              <button id="transcribeBtn" class="btn" onclick="uploadAndTranscribeAudio()">Chạy Whisper nhận diện giọng nói</button>
+            </div>
+            <div id="audioPlayerContainer" class="hidden" style="margin-top:12px;">
+              <label>Nghe lại bản ghi âm gốc của học viên (Kiểm tra Pronunciation & đối chiếu Transcript):</label>
+              <audio id="spkAudioPlayer" controls style="width:100%; margin-top:4px;"></audio>
+            </div>
+          </div>
+
+          <!-- CHỈ SỐ ÂM HỌC & FLUENCY -->
+          <div id="spkMetricsBar" class="metrics-bar">
+            <div class="metric-pill">Thời lượng nói<b id="mDuration">0.0s</b></div>
+            <div class="metric-pill">Tốc độ nói (WPM)<b id="mWpm">0 WPM</b></div>
+            <div class="metric-pill">Khoảng lặng ≥1.2s<b id="mPauses">0 lần</b></div>
+            <div class="metric-pill">Độ rõ Whisper<b id="mClarity">-</b></div>
+          </div>
+
+          <label>Bước B: Transcript (Giáo viên có thể sửa lại các từ Whisper nghe nhầm trước khi bấm Chấm)</label>
+          <textarea id="spkTranscriptInput" rows="7" placeholder="Transcript sau khi chạy Whisper sẽ hiện ở đây (hoặc bạn có thể dán trực tiếp transcript để chấm thử)..."></textarea>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <label style="margin:0;">Thời lượng ước tính (giây, nếu nhập tay):</label>
+              <input type="number" id="spkManualDuration" value="95" style="width:90px; margin:0;" />
+            </div>
+            <button id="assessSpkBtn" class="btn" onclick="submitAndAssessSpeaking()">Chấm Speaking ngay (Qwen3 8B)</button>
+          </div>
+        </div>
+
+        <div id="spkHighlightCard" class="card hidden">
+          <h2>
+            <span>Transcript đối chiếu bằng chứng (Bấm vào lỗi bên phải để tô sáng câu)</span>
+            <button class="btn btn-secondary" style="padding:4px 10px; font-size:0.78rem;" onclick="clearHighlight('spkPreviewBox', currentSpkTranscriptRaw)">Bỏ tô sáng</button>
+          </h2>
+          <div id="spkPreviewBox" class="essay-preview"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>
+            <span>2. Kết quả Phân tích Speaking & Kiểm duyệt Phát âm</span>
+            <span id="spkRubricBadge" class="badge">Chưa có dữ liệu</span>
+          </h2>
+
+          <div id="emptySpkState" style="color:var(--muted); padding:30px 0; text-align:center;">
+            Hãy tải file ghi âm (hoặc nạp bài mẫu) bên trái rồi bấm <b>Chấm Speaking ngay</b>.
+          </div>
+
+          <div id="spkResultBox" class="hidden">
+            <div class="score-grid">
+              <div class="score-box"><div class="label">Fluency (FC)</div><div id="scFC" class="val">-</div></div>
+              <div class="score-box"><div class="label">Lexical (LR)</div><div id="scSpkLR" class="val">-</div></div>
+              <div class="score-box"><div class="label">Grammar (GRA)</div><div id="scSpkGRA" class="val">-</div></div>
+              <div class="score-box"><div class="label">Pronun (Tạm)</div><div id="scPRON" class="val">-</div></div>
+              <div class="score-box overall"><div class="label">AI Overall</div><div id="scSpkOverall" class="val">-</div></div>
+            </div>
+
+            <div style="background:rgba(245, 158, 11, 0.12); border:1px solid var(--warning); color:var(--warning); padding:10px 12px; border-radius:8px; font-size:0.84rem; margin-bottom:14px;">
+              <b>Lưu ý kiến trúc (Mục 7):</b> Văn bản transcript không phản ánh hết âm cuối (ending sounds), trọng âm từ và ngữ điệu. Hãy nghe trình phát âm thanh bên trái và chốt điểm chính thức ở khung dưới đây.
+            </div>
+
+            <div id="spkValidationBanner" style="margin-bottom:14px; font-size:0.84rem; padding:8px 12px; border-radius:8px; background:var(--surface-subtle); border:1px solid var(--border);"></div>
+
+            <div style="background:var(--surface-subtle); border:1px solid var(--primary); border-radius:10px; padding:14px; margin-bottom:16px;">
+              <div style="font-weight:700; color:var(--primary); margin-bottom:10px;">Chốt điểm Speaking của Giáo viên (Sau khi nghe phát âm)</div>
+              <div class="row-3" style="grid-template-columns: 1fr 2fr auto; align-items:end;">
+                <div>
+                  <label>Band Speaking chốt</label>
+                  <input type="number" id="spkTeacherBandInput" step="0.5" min="0" max="9" value="6.5" style="margin:0;" />
+                </div>
+                <div>
+                  <label>Nhận xét Phát âm & Phản xạ của Giáo viên</label>
+                  <input type="text" id="spkTeacherFeedbackInput" placeholder="VD: Phát âm rõ, cần chú ý âm cuối /s/, /ed/ và giảm ngập ngừng ở giữa câu..." style="margin:0;" />
+                </div>
+                <button class="btn btn-success" onclick="saveTeacherReview('speaking')">Lưu Duyệt</button>
+              </div>
+              <div id="spkReviewSavedMsg" style="color:var(--success); font-size:0.82rem; margin-top:8px;" class="hidden"></div>
+            </div>
+
+            <div id="spkCriteriaDetailsBox"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: STUDENT RECORDS -->
+    <div id="tab-students" class="hidden">
+      <div class="grid-2" style="grid-template-columns: 1fr 2fr;">
+        <div class="card">
+          <h2>Thêm Học viên mới</h2>
+          <label>Họ và tên học viên</label>
+          <input type="text" id="newStudentName" placeholder="VD: Trần Hoàng Nam" />
+          <div class="row-3">
+            <div>
+              <label>Target Overall</label>
+              <input type="number" id="newTargetOverall" step="0.5" value="7.0" />
+            </div>
+            <div>
+              <label>Target Writing</label>
+              <input type="number" id="newTargetWriting" step="0.5" value="6.5" />
+            </div>
+            <div>
+              <label>Target Speaking</label>
+              <input type="number" id="newTargetSpeaking" step="0.5" value="6.5" />
+            </div>
+          </div>
+          <label>Ghi chú học viên</label>
+          <textarea id="newStudentNotes" rows="2" placeholder="Điểm mạnh, điểm yếu cần lưu ý..."></textarea>
+          <button class="btn" style="width:100%;" onclick="createNewStudent()">+ Tạo Hồ sơ Học viên</button>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2>
+              <span>Tiến độ & Lịch sử Chấm bài của Học viên (Writing & Speaking)</span>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <select id="progressStudentSelect" style="width:280px; margin:0;" onchange="loadStudentProgress()"></select>
+                <button class="btn btn-danger" style="padding:8px 12px; font-size:0.82rem;" onclick="deleteCurrentStudent()">Xóa học viên</button>
+              </div>
+            </h2>
+
+            <div id="recurringErrorsBox" style="margin-bottom:18px;"></div>
+
+            <h3 style="font-size:0.95rem; margin-bottom:10px; color:var(--muted);">Lịch sử các lượt chấm (Bấm "Mở lại bài" để xem chi tiết)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Kỹ năng / Task</th>
+                  <th>Rubric / Model</th>
+                  <th>Điểm thành phần</th>
+                  <th>AI Band</th>
+                  <th>GV Chốt</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- TAB 4: TEACHING STUDIO (7-STAGE GUIDED WORKFLOW) -->
+    <div id="tab-studio" class="hidden">
+      <div class="card" style="padding:14px 20px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-weight:700; color:var(--primary);">Giáo án (Lesson Plan):</span>
+            <select id="studioPlanSelect" style="width:320px; margin:0;" onchange="onSelectStudioPlan()"></select>
+            <button class="btn btn-secondary" style="padding:7px 12px; font-size:0.84rem;" onclick="resetNewStudioPlan()">+ Soạn Giáo án mới</button>
+            <button class="btn btn-danger" style="padding:7px 12px; font-size:0.84rem;" onclick="deleteCurrentStudioPlan()">Xóa giáo án</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span id="studioGenerationStatusBadge" class="badge">Trạng thái: Mới</span>
+            <button id="studioCancelBtn" class="btn btn-danger hidden" style="padding:6px 12px; font-size:0.82rem;" onclick="cancelStudioRequest()">Hủy tác vụ</button>
+          </div>
+        </div>
+
+        <!-- 7-Stage Stepper Bar -->
+        <div id="studioStageBar" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin-top:14px;">
+          <button class="tab-btn active" id="stBtn1" onclick="switchStudioStage(1)">1. Prepare Lesson</button>
+          <button class="tab-btn" id="stBtn2" onclick="switchStudioStage(2)">2. Review Analysis</button>
+          <button class="tab-btn" id="stBtn3" onclick="switchStudioStage(3)">3. Teaching Playbook</button>
+          <button class="tab-btn" id="stBtn4" onclick="switchStudioStage(4)">4. Student Handout</button>
+          <button class="tab-btn" id="stBtn5" onclick="switchStudioStage(5)">5. Teacher Guide & Key</button>
+          <button class="tab-btn" id="stBtn6" onclick="switchStudioStage(6)">6. Teaching Companion</button>
+          <button class="tab-btn" id="stBtn7" onclick="switchStudioStage(7)">7. Post-Lesson Review</button>
+        </div>
+      </div>
+
+      <div id="studioErrorBanner" class="card hidden" style="border-color:var(--danger); background:var(--danger-soft); color:var(--danger); padding:12px 16px;"></div>
+
+      <!-- STAGE 1: PREPARE LESSON & LOCAL MATERIAL LIBRARY -->
+      <div id="studio-stage-1" class="grid-2">
+        <div class="card">
+          <h2>1. Chuẩn bị Giáo án (Prepare Lesson Input)</h2>
+          <div class="row-3">
+            <div>
+              <label>Tiêu đề bài học (Có thể để trống cho AI trích xuất)</label>
+              <input type="text" id="stTitleInput" oninput="markStudioDirty()" placeholder="VD: Writing Task 2 — Opinion Essay: Agree/Disagree" />
+            </div>
+            <div>
+              <label>Kỹ năng IELTS (Skill)</label>
+              <select id="stSkillSelect" onchange="markStudioDirty()">
+                <option value="writing">Writing</option>
+                <option value="speaking">Speaking</option>
+                <option value="integrated">Integrated (Writing + Speaking)</option>
+              </select>
+            </div>
+            <div>
+              <label>Dạng bài (Task Type)</label>
+              <select id="stTaskTypeSelect" onchange="markStudioDirty()">
+                <option value="task2">Writing Task 2 (Essay)</option>
+                <option value="task1">Writing Task 1 (Chart/Report)</option>
+                <option value="part1">Speaking Part 1</option>
+                <option value="part2">Speaking Part 2 (Cue Card)</option>
+                <option value="part3">Speaking Part 3 (Discussion)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row-3" style="grid-template-columns: 1.5fr 1fr 1fr 1fr;">
+            <div>
+              <label>Học viên (Hoặc chọn Bài học chung)</label>
+              <select id="studioStudentSelect" onchange="onStudioStudentChange()"></select>
+            </div>
+            <div>
+              <label>Band hiện tại</label>
+              <input type="number" id="stCurrentBandInput" step="0.5" min="0" max="9" value="6.0" oninput="markStudioDirty()" />
+            </div>
+            <div>
+              <label>Band mục tiêu</label>
+              <input type="number" id="stTargetBandInput" step="0.5" min="0" max="9" value="7.0" oninput="markStudioDirty()" />
+            </div>
+            <div>
+              <label>Thời lượng (Phút)</label>
+              <input type="number" id="stDurationInput" min="15" max="240" value="60" oninput="markStudioDirty()" />
+            </div>
+          </div>
+
+          <label>Mục tiêu bài học (Learning Objectives — mỗi mục tiêu 1 dòng)</label>
+          <textarea id="stObjectivesInput" rows="3" oninput="markStudioDirty()" placeholder="- Viết được câu Thesis Statement rõ quan điểm&#10;- Phát triển đoạn thân bài theo cấu trúc PEEL&#10;- Tránh lỗi sai mạo từ (ARTICLE) và kết hợp từ (COLLOCATION)"></textarea>
+
+          <label>Nội dung Giáo án thô (Paste Lesson Plan / Outline)</label>
+          <textarea id="stRawPlanInput" rows="7" oninput="markStudioDirty()" placeholder="Dán giáo án, đề cương bài dạy, hoặc danh sách hoạt động dự kiến vào đây..."></textarea>
+
+          <label>Ghi chú giảng dạy & Tài liệu bổ sung của Giáo viên</label>
+          <textarea id="stTeacherNotesInput" rows="2" oninput="markStudioDirty()" placeholder="Lưu ý sư phạm, ngữ cảnh lớp học online qua Zoom, yêu cầu đặc biệt..."></textarea>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <label style="display:flex; align-items:center; gap:8px; margin:0; cursor:pointer; color:var(--text);">
+              <input type="checkbox" id="stPersonalizeToggle" checked style="width:auto; margin:0;" />
+              <span>Cá nhân hóa bài tập theo lịch sử lỗi & Band của học viên</span>
+            </label>
+            <button id="stAnalyzeBtn" class="btn" onclick="runStudioAnalyze()">Phân tích & Chuẩn hóa Giáo án (Bước 1 → 2)</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2>
+              <span>Thư viện Tài liệu Cục bộ (Local Material Library)</span>
+              <span class="badge">TXT · MD · DOCX · PDF</span>
+            </h2>
+            <p style="font-size:0.84rem; color:var(--muted); margin-bottom:12px;">
+              Tải lên giáo án mẫu, rubric hoặc tài liệu đọc thêm từ máy tính (100% Offline). Hệ thống giữ nguyên tên file nguồn và mục/trang để đối chiếu, không tự bịa trích dẫn.
+            </p>
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+              <input type="file" id="stMaterialFileInput" accept=".txt,.md,.docx,.pdf" style="margin:0; flex:1;" />
+              <input type="text" id="stMaterialTitleInput" placeholder="Tên gợi nhớ (tùy chọn)" style="margin:0; width:180px;" />
+              <button class="btn btn-secondary" onclick="uploadStudioMaterial()">+ Nạp vào Thư viện</button>
+            </div>
+            <div id="stMaterialListBox" style="max-height:280px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; padding:10px; background:var(--surface-subtle);"></div>
+          </div>
+
+          <div class="card">
+            <h2>Tóm tắt Hồ sơ Cá nhân hóa của Học viên đang chọn</h2>
+            <div id="stStudentHistoryPreview" style="font-size:0.88rem; color:var(--muted);">
+              Chọn một học viên ở khung bên trái để xem lịch sử bài nộp và các lỗi lặp lại đã được giáo viên xác nhận.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2: REVIEW LESSON ANALYSIS -->
+      <div id="studio-stage-2" class="hidden">
+        <div class="grid-2">
+          <div class="card">
+            <h2>
+              <span>2. Duyệt & Chỉnh sửa Kết quả Phân tích Giáo án</span>
+              <span id="stReviewStatusBadge" class="badge">Chưa duyệt</span>
+            </h2>
+            <label>Tiêu đề bài học đã chuẩn hóa</label>
+            <input type="text" id="revTitleInput" oninput="markStudioDirty()" />
+
+            <div class="row-3">
+              <div>
+                <label>Kỹ năng</label>
+                <select id="revSkillSelect" onchange="markStudioDirty()">
+                  <option value="writing">Writing</option>
+                  <option value="speaking">Speaking</option>
+                  <option value="integrated">Integrated</option>
+                </select>
+              </div>
+              <div>
+                <label>Dạng bài</label>
+                <input type="text" id="revTaskTypeInput" oninput="markStudioDirty()" />
+              </div>
+              <div>
+                <label>Thời lượng (Phút)</label>
+                <input type="number" id="revDurationInput" min="10" max="240" oninput="markStudioDirty()" />
+              </div>
+            </div>
+
+            <label>Mục tiêu bài học (Learning Objectives — 1 dòng / mục tiêu)</label>
+            <textarea id="revObjectivesInput" rows="3" oninput="markStudioDirty()"></textarea>
+
+            <label>Kiến thức nền cần có (Prerequisite Knowledge — 1 dòng / ý)</label>
+            <textarea id="revPrereqInput" rows="2" oninput="markStudioDirty()"></textarea>
+
+            <label>Khó khăn dự kiến của học viên (Expected Difficulties — 1 dòng / ý)</label>
+            <textarea id="revDiffInput" rows="2" oninput="markStudioDirty()"></textarea>
+
+            <label>Tiêu chí đánh giá đầu ra (Assessment Criteria — 1 dòng / ý)</label>
+            <textarea id="revCriteriaInput" rows="2" oninput="markStudioDirty()"></textarea>
+
+            <label>Học liệu sử dụng (Available Teaching Resources — 1 dòng / ý)</label>
+            <textarea id="revResourcesInput" rows="2" oninput="markStudioDirty()"></textarea>
+          </div>
+
+          <div>
+            <div class="card">
+              <h2>Phân biệt Thông tin Tường minh (Explicit) & Giả định của AI (Assumed)</h2>
+              <p style="font-size:0.84rem; color:var(--muted); margin-bottom:10px;">
+                Các mục đánh dấu <span class="badge" style="background:#78350f; color:var(--warning);">ASSUMED (Giả định)</span> là thông tin còn thiếu trong bản nhập thô được AI đề xuất để giáo viên kiểm duyệt trước khi sinh học liệu.
+              </p>
+              <div id="revExplicitAssumedBox" style="margin-bottom:16px;"></div>
+
+              <h2>Danh sách Hoạt động Dự kiến (Chỉnh sửa trực tiếp trước khi tạo Playbook)</h2>
+              <div id="revPlannedActivitiesBox"></div>
+              <button class="btn btn-secondary" style="margin-top:8px; width:100%;" onclick="addPlannedActivityRow()">+ Thêm Hoạt động Dự kiến</button>
+
+              <div style="display:flex; justify-content:space-between; gap:10px; margin-top:18px;">
+                <button class="btn btn-success" style="flex:1;" onclick="saveReviewedLessonPlan(false)">✓ Lưu Bản Duyệt Giáo Án</button>
+                <button class="btn" style="flex:1;" onclick="saveReviewedLessonPlan(true)">Lưu & Sinh Teaching Playbook (Bước 3) →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 3: TEACHING PLAYBOOK -->
+      <div id="studio-stage-3" class="hidden">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div>
+              <h2 style="margin:0;">3. Kịch bản Giảng dạy Chi tiết (Teaching Playbook)</h2>
+              <div id="pbApproachText" style="font-size:0.88rem; color:var(--muted); margin-top:4px;"></div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="genPlaybookBtn" class="btn" onclick="generateStudioPlaybook(true)">Sinh Playbook</button>
+              <button class="btn btn-secondary" onclick="exportStudioDoc('teaching_playbook', 'docx')">Xuất DOCX</button>
+              <button class="btn btn-secondary" onclick="exportStudioDoc('teaching_playbook', 'pdf')">Xuất PDF</button>
+              <button class="btn btn-success" onclick="switchStudioStage(4)">Tiếp tục: Student Handout (Bước 4) →</button>
+            </div>
+          </div>
+
+          <div id="pbDurationBanner" style="padding:12px 14px; border-radius:8px; background:var(--surface-subtle); border:1px solid var(--border); margin-bottom:14px; font-size:0.88rem;"></div>
+          <div id="pbActivitiesContainer"></div>
+        </div>
+      </div>
+
+      <!-- STAGE 4: STUDENT HANDOUT -->
+      <div id="studio-stage-4" class="hidden">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div>
+              <h2 style="margin:0;">4. Phiếu Bài tập Học viên (Student-Facing Handout — Không chứa Đáp án)</h2>
+              <div style="font-size:0.84rem; color:var(--success); margin-top:4px;">
+                ✓ Đã kiểm duyệt tách biệt 100%: Không tiết lộ đáp án hoặc ghi chú chấm bài của giáo viên trong bản xuất cho học viên.
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="genMaterialsBtn" class="btn" onclick="generateStudioMaterials(true)">Sinh Handout & Guide</button>
+              <button class="btn btn-secondary" onclick="exportStudioDoc('student_handout', 'docx')">Xuất DOCX Handout</button>
+              <button class="btn btn-secondary" onclick="exportStudioDoc('student_handout', 'pdf')">Xuất PDF Handout</button>
+              <button class="btn btn-success" onclick="switchStudioStage(5)">Xem Teacher Guide & Answer Key (Bước 5) →</button>
+            </div>
+          </div>
+
+          <!-- Personalization Banner & Override Controls -->
+          <div style="background:var(--surface-subtle); border:1px solid var(--primary); border-radius:10px; padding:12px 14px; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div>
+                <div style="font-weight:700; color:var(--primary); font-size:0.9rem;">Tóm tắt Cá nhân hóa Học liệu (Student Personalization Summary)</div>
+                <div id="hoPersonalizationSummary" style="font-size:0.85rem; color:var(--text); margin-top:4px;">Chưa sinh Handout.</div>
+              </div>
+              <label style="display:flex; align-items:center; gap:6px; margin:0; cursor:pointer;">
+                <input type="checkbox" id="hoPersonalizeCheck" checked style="width:auto; margin:0;" />
+                <span>Bật cá nhân hóa</span>
+              </label>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <input type="text" id="hoCustomOverrideInput" placeholder="Ghi đè hoặc chỉ dẫn cá nhân hóa bổ sung của Giáo viên (VD: Tập trung thêm vào đảo ngữ và mệnh đề quan hệ)..." style="margin:0; flex:1;" />
+              <button class="btn btn-secondary" onclick="generateStudioMaterials(true)">Áp dụng & Tạo lại Học liệu</button>
+            </div>
+          </div>
+
+          <div id="hoExercisesContainer"></div>
+          <div id="hoFooterMetaBox" style="margin-top:14px;"></div>
+        </div>
+      </div>
+
+      <!-- STAGE 5: TEACHER GUIDE & ANSWER KEY -->
+      <div id="studio-stage-5" class="hidden">
+        <div class="card" style="border-color:var(--warning);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div>
+              <h2 style="margin:0; color:var(--warning);">5. Hướng dẫn Giáo viên & Đáp án Chi tiết (Teacher-Only Guide & Answer Key)</h2>
+              <div style="font-size:0.84rem; color:var(--muted); margin-top:4px;">
+                Tài liệu lưu hành nội bộ cho Giáo viên. Các đoạn mẫu do AI cục bộ tạo đều được gắn nhãn <b>[Illustrative Example — Không phải bài mẫu Cambridge chính thức]</b>.
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-secondary" onclick="exportStudioDoc('teacher_guide', 'docx')">Xuất DOCX Guide</button>
+              <button class="btn btn-secondary" onclick="exportStudioDoc('teacher_guide', 'pdf')">Xuất PDF Guide</button>
+              <button class="btn btn-secondary" style="border:1px solid #fde047; color:var(--warning);" onclick="exportStudioDoc('answer_key', 'docx')">Xuất DOCX Answer Key</button>
+              <button class="btn btn-secondary" style="border:1px solid #fde047; color:var(--warning);" onclick="exportStudioDoc('answer_key', 'pdf')">Xuất PDF Answer Key</button>
+              <button class="btn btn-success" onclick="switchStudioStage(6)">Vào lớp: Teaching Companion (Bước 6) →</button>
+            </div>
+          </div>
+
+          <div id="tgAnswerKeysContainer"></div>
+          <div id="tgObjectiveChecklistBox" style="margin-top:16px;"></div>
+        </div>
+      </div>
+
+      <!-- STAGE 6: TEACHING COMPANION (LIVE ONLINE LESSON) -->
+      <div id="studio-stage-6" class="hidden">
+        <div class="grid-2" style="grid-template-columns: 1fr 1.25fr;">
+          <div>
+            <div class="card">
+              <h2>
+                <span>6. Tiến độ Hoạt động trên Lớp (Live Activity Tracker)</span>
+                <button class="btn btn-secondary" style="padding:5px 10px; font-size:0.8rem;" onclick="initOrLoadCompanionSession()">Đồng bộ phiên</button>
+              </h2>
+              <div class="row-3" style="grid-template-columns:1fr 1fr auto; align-items:end; margin-bottom:12px;">
+                <div>
+                  <label>Thời gian đã dạy (Phút)</label>
+                  <input type="number" id="compElapsedInput" min="0" max="240" value="0" style="margin:0;" />
+                </div>
+                <div>
+                  <label>Thời gian còn lại (Phút)</label>
+                  <input type="number" id="compRemainingInput" min="0" max="240" value="60" style="margin:0;" />
+                </div>
+                <button class="btn btn-secondary" onclick="saveCompanionSessionState()">Cập nhật Giờ</button>
+              </div>
+
+              <div id="compActivitiesListBox" style="margin-bottom:16px;"></div>
+
+              <h2>Đánh giá Mục tiêu Bài học ngay trong buổi dạy</h2>
+              <div id="compObjectivesStatusBox" style="margin-bottom:14px;"></div>
+
+              <label>Ghi chú nhanh về khó khăn/phản ứng của học viên</label>
+              <div style="display:flex; gap:8px;">
+                <input type="text" id="compQuickNoteInput" placeholder="VD: Học viên nhầm lẫn giữa Although và Despite khi viết câu phức..." style="margin:0; flex:1;" />
+                <button class="btn btn-secondary" onclick="addCompanionLiveNote()">+ Lưu Ghi chú</button>
+              </div>
+              <div id="compLiveNotesHistory" style="margin-top:10px; font-size:0.84rem; color:var(--muted);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <h2>Chi tiết Hoạt động Đang dạy & Trợ lý Ứng biến Sư phạm (Contextual Actions)</h2>
+              <div id="compActiveActivityDetail" style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:14px; font-size:0.9rem;">
+                Chọn một hoạt động bên trái để xem lời dẫn của giáo viên, câu hỏi gợi mở (CCQs) và câu trả lời kỳ vọng.
+              </div>
+
+              <label>Ngữ cảnh / Câu trả lời vừa rồi của học viên (Tùy chọn trước khi bấm nút Hỗ trợ)</label>
+              <textarea id="compContextInput" rows="2" placeholder="Nhập câu trả lời sai của học viên hoặc điểm học viên đang vướng để AI gợi ý sát ngữ cảnh bài học..."></textarea>
+
+              <div style="font-size:0.84rem; color:var(--muted); margin-bottom:8px; font-weight:600;">
+                Bấm chọn tình huống lớp học để tạo ngay phương án xử lý (100% dựa trên giáo án hiện tại):
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;">
+                <button class="btn btn-secondary" style="text-align:left; border-left:3px solid var(--warning);" onclick="triggerCompanionAction('student_stuck')">
+                  <b>Học viên đang bí (Student is stuck)</b><br/><span style="font-size:0.78rem; color:var(--muted);">Giải thích cách khác + Ví dụ đơn giản + 1 câu hỏi gợi mở</span>
+                </button>
+                <button class="btn btn-secondary" style="text-align:left; border-left:3px solid var(--success);" onclick="triggerCompanionAction('understands_quickly')">
+                  <b>Học viên hiểu nhanh (Understands quickly)</b><br/><span style="font-size:0.78rem; color:var(--muted);">Tăng độ khó + Giảm gợi ý + Bài tập vận dụng đề mới</span>
+                </button>
+                <button class="btn btn-secondary" style="text-align:left; border-left:3px solid var(--danger);" onclick="triggerCompanionAction('answers_incorrectly')">
+                  <b>Học viên trả lời sai (Answers incorrectly)</b><br/><span style="font-size:0.78rem; color:var(--muted);">Chẩn đoán ngộ nhận + Câu hỏi Socratic (không lộ ngay đáp án)</span>
+                </button>
+                <button class="btn btn-secondary" style="text-align:left; border-left:3px solid var(--primary);" onclick="triggerCompanionAction('behind_schedule')">
+                  <b>Cháy giáo án / Sắp hết giờ (Behind schedule)</b><br/><span style="font-size:0.78rem; color:var(--muted);">Tính lại giờ còn lại + Rút gọn hoạt động phụ + Giữ mục tiêu cốt lõi</span>
+                </button>
+              </div>
+
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+                <button class="btn btn-secondary" style="font-size:0.82rem; padding:6px 12px;" onclick="triggerCompanionAction('alternative_explanation')">Xin cách giải thích khác</button>
+                <button class="btn btn-secondary" style="font-size:0.82rem; padding:6px 12px;" onclick="triggerCompanionAction('adjust_exercise_difficulty')">Tạo bài tập Dễ hơn / Khó hơn</button>
+                <button class="btn btn-secondary" style="font-size:0.82rem; padding:6px 12px;" onclick="triggerCompanionAction('followup_questions')">Tạo câu hỏi Follow-up</button>
+                <button class="btn btn-success" style="font-size:0.82rem; padding:6px 12px; margin-left:auto;" onclick="switchStudioStage(7)">Kết thúc buổi dạy → Bước 7</button>
+              </div>
+
+              <div id="compAdaptationOutputBox"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 7: POST-LESSON REVIEW -->
+      <div id="studio-stage-7" class="hidden">
+        <div class="grid-2">
+          <div class="card">
+            <h2>7. Ghi nhận Kết quả Sau buổi học (Teacher-Confirmed Post-Lesson Review)</h2>
+            <p style="font-size:0.84rem; color:var(--muted); margin-bottom:12px;">
+              Quan sát chính thức của Giáo viên được lưu tách biệt hoàn toàn với giả thuyết của AI, và <b>chỉ cập nhật vào hồ sơ học tập khi Giáo viên xác nhận</b> (tuyệt đối không tự động ghi đè điểm Band chính thức).
+            </p>
+
+            <label>Các hoạt động đã hoàn thành (1 dòng / hoạt động)</label>
+            <textarea id="revCompletedActsInput" rows="2"></textarea>
+
+            <label>Khó khăn thực tế của học viên trong buổi học (1 dòng / ý)</label>
+            <textarea id="revStuDifficultiesInput" rows="2" placeholder="VD: Chưa viết kịp câu kết bài trong 5 phút; dùng sai giới từ chỉ xu hướng..."></textarea>
+
+            <div class="grid-2" style="gap:10px;">
+              <div>
+                <label>Bài tập quá dễ (Nếu có)</label>
+                <input type="text" id="revTooEasyInput" placeholder="VD: Exercise 1" />
+              </div>
+              <div>
+                <label>Bài tập quá khó (Nếu có)</label>
+                <input type="text" id="revTooHardInput" placeholder="VD: Exercise 3" />
+              </div>
+            </div>
+
+            <label>Nhận xét & Đánh giá chính thức của Giáo viên (Teacher-Confirmed Notes)</label>
+            <textarea id="revTeacherNotesFinalInput" rows="3" placeholder="Ghi nhận chính thức của giáo viên về mức độ nắm bài của học viên..."></textarea>
+
+            <label>Bài tập về nhà đã giao (Homework Assigned)</label>
+            <textarea id="revHomeworkInput" rows="2"></textarea>
+
+            <label>Trọng tâm đề xuất cho buổi học tiếp theo (Recommended Next Focus)</label>
+            <input type="text" id="revNextFocusInput" placeholder="VD: Luyện viết đoạn Body 2 phản biện (Counter-argument) & kiểm soát mạo từ" />
+
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:14px; cursor:pointer; color:var(--success);">
+              <input type="checkbox" id="revConfirmHistoryCheck" checked style="width:auto; margin:0;" />
+              <span><b>Xác nhận của Giáo viên:</b> Cập nhật nhận xét & trọng tâm buổi tới vào Lịch sử học tập của học viên (Không ghi đè điểm Band chính thức)</span>
+            </label>
+
+            <button id="savePostReviewBtn" class="btn btn-success" style="width:100%;" onclick="submitPostLessonReview()">✓ Lưu Tổng kết Buổi học & Sinh Đề xuất Tiếp theo</button>
+          </div>
+
+          <div>
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                <h2 style="margin:0;">Hồ sơ Tổng kết Buổi học (Tách biệt Ghi nhận GV & Giả thuyết AI)</h2>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-secondary" style="padding:6px 10px; font-size:0.8rem;" onclick="exportStudioDoc('post_lesson_summary', 'docx')">Xuất DOCX</button>
+                  <button class="btn btn-secondary" style="padding:6px 10px; font-size:0.8rem;" onclick="exportStudioDoc('post_lesson_summary', 'pdf')">Xuất PDF</button>
+                </div>
+              </div>
+              <div id="postLessonReviewsContainer">
+                <div style="color:var(--muted); font-size:0.88rem;">Chưa có bản tổng kết nào cho giáo án này.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentSubmissionId = null;
+    let currentAssessmentId = null;
+    let currentEssayRaw = "";
+
+    let currentSpkSubmissionId = null;
+    let currentSpkAssessmentId = null;
+    let currentSpkTranscriptRaw = "";
+
+    let mediaRecorder = null;
+    let recordedChunks = [];
+
+    async function api(path, options = {}) {
+      const resp = await fetch(path, {
+        headers: options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' },
+        ...options
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        throw new Error(typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail));
+      }
+      return resp.json();
+    }
+
+    function switchTab(tab) {
+      document.getElementById('tab-writing').classList.toggle('hidden', tab !== 'writing');
+      document.getElementById('tab-speaking').classList.toggle('hidden', tab !== 'speaking');
+      document.getElementById('tab-students').classList.toggle('hidden', tab !== 'students');
+      const tabs = ['writing', 'speaking', 'students'];
+      document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', tabs[idx] === tab);
+      });
+      if (tab === 'students') loadStudentProgress();
+    }
+
+    
+    async function extractTask1Chart() {
+      const fileInput = document.getElementById('task1ImageFile');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        return alert('Hãy chọn 1 file ảnh biểu đồ Task 1 (.png, .jpg, .webp) trước!');
+      }
+      const btn = document.getElementById('extractChartBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang đọc biểu đồ bằng gemma3:4b...';
+      try {
+        const fd = new FormData();
+        fd.append('prompt_text', document.getElementById('promptInput').value.trim());
+        fd.append('vision_model', 'gemma3:4b');
+        fd.append('chart_image', fileInput.files[0]);
+        const res = await api('/api/task1/extract-chart', { method: 'POST', body: fd });
+        const summary = [
+          `[Chart Type]: ${res.chart_type || 'N/A'}`,
+          `[Expected Overview]: ${res.overall_trend_summary || ''}`,
+          `[Key Reference Data]:`,
+          ...(res.key_data_points || []).map(p => `- ${p}`)
+        ].join('\n');
+        document.getElementById('task1ChartDataInput').value = summary;
+      } catch (e) {
+        alert('Lỗi trích xuất ảnh biểu đồ: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '👁 Đọc số liệu từ Ảnh (gemma3:4b)';
+      }
+    }
+
+    async function triggerBackup() {
+      try {
+        const res = await api('/api/system/backup', { method: 'POST' });
+        alert(`✓ Đã tạo bản sao lưu Database an toàn tại:\nF:\\ielts-copilot\\data\\backups\\${res.backup_created}`);
+      } catch (e) {
+        alert('Lỗi khi sao lưu Database: ' + e.message);
+      }
+    }
+
+    function updateWordCount() {
+      const isT1 = document.getElementById('taskTypeSelect').value === 'task1';
+      const t1Box = document.getElementById('task1ChartBox');
+      if (t1Box) t1Box.classList.toggle('hidden', !isT1);
+      const text = document.getElementById('essayInput').value.trim();
+      const words = text ? (text.match(/\b[a-zA-Z0-9]+(?:['-][a-zA-Z0-9]+)*\b/g) || []).length : 0;
+      const taskType = document.getElementById('taskTypeSelect').value;
+      const minW = taskType === 'task1' ? 150 : 250;
+      const badge = document.getElementById('wordCountBadge');
+      badge.textContent = `${words} từ (Tối thiểu: ${minW})`;
+      badge.style.color = words >= minW ? '#4ade80' : '#fbbf24';
+    }
+
+    async function initApp() {
+      try {
+        const health = await api('/api/health');
+        const st = document.getElementById('ollamaStatus');
+        if (health.ollama && health.ollama.ollama_online) {
+          st.textContent = `Ollama Online (${health.ollama.installed_models.join(', ')})`;
+          st.classList.add('online');
+        } else {
+          st.textContent = 'Ollama Offline';
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      await loadStudentsList();
+    }
+
+    async function loadStudentsList() {
+      const data = await api('/api/students');
+      const students = data.students || [];
+      const selects = ['studentSelect', 'spkStudentSelect', 'progressStudentSelect'];
+      selects.forEach(id => {
+        const sel = document.getElementById(id);
+        sel.innerHTML = '';
+        students.forEach(s => {
+          const label = `${s.name} (Target: ${s.target_overall || '-'} | Hiện tại: ${s.current_overall || 'Chưa chốt'})`;
+          sel.add(new Option(label, s.id));
+        });
+      });
+      if (students.length > 0) {
+        await loadStudentProgress();
+      }
+    }
+
+    async function createNewStudent() {
+      const name = document.getElementById('newStudentName').value.trim();
+      if (!name) return alert('Vui lòng nhập họ tên học viên!');
+      await api('/api/students', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          target_overall: parseFloat(document.getElementById('newTargetOverall').value) || 7.0,
+          target_writing: parseFloat(document.getElementById('newTargetWriting').value) || 6.5,
+          target_speaking: parseFloat(document.getElementById('newTargetSpeaking').value) || 6.5,
+          notes: document.getElementById('newStudentNotes').value.trim()
+        })
+      });
+      document.getElementById('newStudentName').value = '';
+      document.getElementById('newStudentNotes').value = '';
+      await loadStudentsList();
+      showToast('Đã tạo hồ sơ học viên mới');
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function highlightQuoteInBox(boxId, rawText, quote) {
+      const box = document.getElementById(boxId);
+      if (!quote || !rawText) return;
+      const escapedText = escapeHtml(rawText);
+      const escapedQuote = escapeHtml(quote.trim());
+      const idx = escapedText.toLowerCase().indexOf(escapedQuote.toLowerCase());
+      if (idx === -1) {
+        box.innerHTML = escapedText;
+        return;
+      }
+      const before = escapedText.slice(0, idx);
+      const match = escapedText.slice(idx, idx + escapedQuote.length);
+      const after = escapedText.slice(idx + escapedQuote.length);
+      box.innerHTML = `${before}<mark class="hl" id="activeHl_${boxId}">${match}</mark>${after}`;
+      const el = document.getElementById(`activeHl_${boxId}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function clearHighlight(boxId, rawText) {
+      document.getElementById(boxId).innerHTML = escapeHtml(rawText);
+    }
+
+    // ================= WRITING LAB =================
+    async function submitAndAssessWriting() {
+      const studentId = document.getElementById('studentSelect').value;
+      const taskType = document.getElementById('taskTypeSelect').value;
+      const modelName = document.getElementById('modelSelect').value;
+      let promptText = document.getElementById('promptInput').value.trim();
+      const chartRef = document.getElementById('task1ChartDataInput') ? document.getElementById('task1ChartDataInput').value.trim() : '';
+      if (taskType === 'task1' && chartRef) {
+        promptText += `\n\n[CHART REFERENCE DATA FOR TASK 1 VERIFICATION]:\n${chartRef}`;
+      }
+      const essayText = document.getElementById('essayInput').value.trim();
+      const think = document.getElementById('thinkToggle').checked;
+
+      if (!studentId) return alert('Hãy chọn 1 học viên trước!');
+      if (promptText.length < 10 || essayText.length < 20) return alert('Vui lòng nhập đầy đủ đề bài và bài làm!');
+
+      const btn = document.getElementById('assessBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang chấm Writing (~25-40s)...';
+
+      try {
+        const sub = await api('/api/submissions/writing', {
+          method: 'POST',
+          body: JSON.stringify({
+            student_id: studentId,
+            task_type: taskType,
+            prompt_text: promptText,
+            response_text: essayText
+          })
+        });
+        currentSubmissionId = sub.id;
+        currentEssayRaw = essayText;
+
+        const assessed = await api(`/api/submissions/${sub.id}/assess`, {
+          method: 'POST',
+          body: JSON.stringify({ model_name: modelName, think })
+        });
+        renderWritingAssessment(assessed, essayText);
+      } catch (e) {
+        alert('Lỗi khi chấm Writing: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Chấm Writing ngay';
+      }
+    }
+
+    function renderWritingAssessment(assessed, essayText) {
+      currentSubmissionId = assessed.submission_id;
+      currentAssessmentId = assessed.id;
+      currentEssayRaw = essayText;
+
+      document.getElementById('emptyAssessmentState').classList.add('hidden');
+      document.getElementById('assessmentResultBox').classList.remove('hidden');
+      document.getElementById('essayHighlightCard').classList.remove('hidden');
+      document.getElementById('essayPreviewBox').innerHTML = escapeHtml(essayText);
+
+      const fb = assessed.feedback_parsed || {};
+      document.getElementById('rubricBadge').textContent = `${assessed.rubric_version} · ${assessed.model_name}`;
+      document.getElementById('scTR').textContent = assessed.task_response ?? '-';
+      document.getElementById('scCC').textContent = assessed.coherence ?? '-';
+      document.getElementById('scLR').textContent = assessed.lexical ?? '-';
+      document.getElementById('scGRA').textContent = assessed.grammar ?? '-';
+      document.getElementById('scOverall').textContent = assessed.estimated_overall ?? '-';
+
+      document.getElementById('teacherBandInput').value = assessed.teacher_overall ?? assessed.estimated_overall ?? 6.5;
+      document.getElementById('teacherFeedbackInput').value = assessed.teacher_feedback || '';
+      document.getElementById('reviewSavedMsg').classList.add('hidden');
+
+      const val = fb.validation_summary || {};
+      const bench = fb.benchmark || {};
+      document.getElementById('validationBanner').innerHTML =
+        `<b>Kiểm tra trích dẫn:</b> ${val.verified_quotes ?? 0}/${val.total_quotes_checked ?? 0} câu khớp 100% · <b>Lỗi chéo tiêu chí:</b> ${val.cross_criterion_violations ?? 0} · <b>Tốc độ:</b> ${bench.elapsed_seconds ?? '-'}s (${bench.tokens_per_second ?? '-'} tok/s)`;
+
+      const critBox = document.getElementById('criteriaDetailsBox');
+      critBox.innerHTML = '';
+      const labels = {
+        task_response: 'Task Response (Trả lời đề & Phát triển luận điểm)',
+        coherence_cohesion: 'Coherence & Cohesion (Mạch lạc & Liên kết đoạn)',
+        lexical_resource: 'Lexical Resource (Vốn từ & Collocation)',
+        grammatical_range_accuracy: 'Grammatical Range & Accuracy (Ngữ pháp & Cấu trúc câu)'
+      };
+
+      const criteria = fb.criteria || {};
+      for (const [key, title] of Object.entries(labels)) {
+        const c = criteria[key] || {};
+        const sec = document.createElement('div');
+        sec.className = 'crit-section';
+        sec.innerHTML = `<div class="crit-title"><span>${title}</span><span>Band ${c.estimated_band ?? '-'}</span></div>`;
+        (c.evidence || []).forEach(ev => {
+          const item = document.createElement('div');
+          item.className = 'ev-item';
+          const verifiedTag = ev.quote_verified ? '<span style="color:var(--success);">[✓ Khớp bài gốc]</span>' : '<span style="color:#f87171;">[⚠ Trích dẫn lệch]</span>';
+          item.innerHTML = `
+            <div class="ev-quote">"${escapeHtml(ev.quote || '')}" ${verifiedTag} <span class="badge">${escapeHtml(ev.error_code || '')}</span></div>
+            <div>${escapeHtml(ev.issue || '')}</div>
+            <div class="ev-fix">→ Gợi ý sửa: ${escapeHtml(ev.suggestion || '')}</div>
+          `;
+          item.onclick = () => highlightQuoteInBox('essayPreviewBox', currentEssayRaw, ev.quote || '');
+          sec.appendChild(item);
+        });
+        critBox.appendChild(sec);
+      }
+    }
+
+    // ================= SPEAKING LAB =================
+    function loadSampleSpeaking() {
+      document.getElementById('spkPartSelect').value = 'part2';
+      document.getElementById('spkPromptInput').value =
+        'Describe a skill that you learned when you were a teenager. You should say: what the skill is, when and how you learned it, who taught you, and explain why this skill is important to you.';
+      document.getElementById('spkTranscriptInput').value =
+        "Well, I would like to talk about cooking, which is a practical life skill that I picked up when I was around fifteen years old. At that time, both of my parents was working full-time and often came home quite late in the evening. So my grandmother, who is an amazing traditional cook, decided to teach me how to prepare simple daily meals for our family. Initially, I only helped her with washing vegetables and boiling rice, but gradually she showed me how to season dishes properly and balance different flavors. One of the biggest challenge for me was controlling the heat when stir-frying, because I burned the garlic several times during the first week. However, after practicing every weekend for a few months, I became much more confident in the kitchen. Looking back, learning how to cook at an early age has been extremely valuable for me. Not only does it allow me to eat healthier and save money when studying away from home, but cooking for my loved ones also helps me relieve stress after a long day.";
+      document.getElementById('spkManualDuration').value = '88';
+      updateSpkMetricsUI({ duration_seconds: 88.0, words_per_minute: 121.4, long_pause_count: 1, whisper_clarity_percent: 92.5 });
+      currentSpkSubmissionId = null;
+    }
+
+    function updateSpkMetricsUI(m) {
+      document.getElementById('mDuration').textContent = `${m.duration_seconds ?? 0}s`;
+      document.getElementById('mWpm').textContent = `${m.words_per_minute ?? 0} WPM`;
+      document.getElementById('mPauses').textContent = `${m.long_pause_count ?? 0} lần`;
+      document.getElementById('mClarity').textContent = m.whisper_clarity_percent ? `${m.whisper_clarity_percent}%` : '-';
+    }
+
+    
+    let zoomRecorder = null;
+    let zoomStream = null;
+    let zoomChunks = [];
+
+    async function toggleZoomAudioRecording() {
+      const btn = document.getElementById('zoomRecBtn');
+      if (zoomRecorder && zoomRecorder.state === 'recording') {
+        zoomRecorder.stop();
+        btn.textContent = '💻 Thu tiếng Học viên từ Zoom';
+        btn.classList.remove('btn-danger');
+        btn.classList.add('btn-secondary');
+        return;
+      }
+      try {
+        // Bắt âm thanh phát ra từ hệ thống (System Audio / Zoom App) ngay cả khi đeo tai nghe
+        const displayStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+        });
+
+        const audioTracks = displayStream.getAudioTracks();
+        if (!audioTracks || audioTracks.length === 0) {
+          displayStream.getTracks().forEach(t => t.stop());
+          alert('LƯU Ý: Bạn chưa bật công tắc "Chia sẻ âm thanh hệ thống" (Also share system audio) ở dưới cùng hộp thoại vừa hiện ra! Hãy bấm lại và tích chọn chia sẻ âm thanh nhé.');
+          return;
+        }
+
+        // Chỉ giữ lại kênh âm thanh của học viên từ Zoom (hủy kênh hình ảnh để file nhẹ chỉ vài trăm KB)
+        zoomStream = displayStream;
+        const audioOnlyStream = new MediaStream(audioTracks);
+        zoomChunks = [];
+        zoomRecorder = new MediaRecorder(audioOnlyStream, { mimeType: 'audio/webm' });
+        zoomRecorder.ondataavailable = e => { if (e.data.size > 0) zoomChunks.push(e.data); };
+        zoomRecorder.onstop = () => {
+          const blob = new Blob(zoomChunks, { type: 'audio/webm' });
+          const file = new File([blob], 'zoom_student_speaking.webm', { type: 'audio/webm' });
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          document.getElementById('spkAudioFile').files = dt.files;
+          if (zoomStream) zoomStream.getTracks().forEach(t => t.stop());
+          alert('Đã thu xong tiếng học viên từ Zoom! Bấm "Chạy Whisper nhận diện giọng nói" để chuyển thành văn bản.');
+        };
+        zoomRecorder.start();
+        btn.textContent = '⏹ Dừng thu từ Zoom';
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-danger');
+      } catch (e) {
+        console.error(e);
+        alert('Đã hủy hoặc không chọn chia sẻ âm thanh hệ thống: ' + e.message);
+      }
+    }
+
+    async function toggleMicRecording() {
+      const btn = document.getElementById('recBtn');
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        btn.textContent = '🎙 Thu âm Micro';
+        btn.classList.remove('btn-danger');
+        btn.classList.add('btn-secondary');
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const file = new File([blob], 'live_recording.webm', { type: 'audio/webm' });
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          document.getElementById('spkAudioFile').files = dt.files;
+          stream.getTracks().forEach(t => t.stop());
+          alert('Đã thu âm xong! Bấm "Chạy Whisper nhận diện giọng nói" để chuyển thành văn bản.');
+        };
+        mediaRecorder.start();
+        btn.textContent = '⏹ Dừng thu âm';
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-danger');
+      } catch (e) {
+        alert('Không truy cập được Micro: ' + e.message);
+      }
+    }
+
+    async function uploadAndTranscribeAudio() {
+      const studentId = document.getElementById('spkStudentSelect').value;
+      const part = document.getElementById('spkPartSelect').value;
+      const promptText = document.getElementById('spkPromptInput').value.trim() || 'IELTS Speaking Practice';
+      const whisperModel = document.getElementById('whisperModelSelect').value;
+      const fileInput = document.getElementById('spkAudioFile');
+
+      if (!studentId) return alert('Hãy chọn học viên trước!');
+      if (!fileInput.files || fileInput.files.length === 0) return alert('Hãy chọn 1 file âm thanh (.mp3, .wav, .m4a, .webm) hoặc thu âm bằng Micro trước!');
+
+      const btn = document.getElementById('transcribeBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang chạy Whisper offline (lần đầu sẽ tải model về ổ F:)...';
+
+      try {
+        const fd = new FormData();
+        fd.append('student_id', studentId);
+        fd.append('task_type', part);
+        fd.append('prompt_text', promptText);
+        fd.append('audio_file', fileInput.files[0]);
+
+        const sub = await api('/api/submissions/speaking/upload', { method: 'POST', body: fd });
+        currentSpkSubmissionId = sub.id;
+
+        // Hiển thị trình phát âm thanh
+        const playerBox = document.getElementById('audioPlayerContainer');
+        const player = document.getElementById('spkAudioPlayer');
+        player.src = `/api/submissions/${sub.id}/audio`;
+        playerBox.classList.remove('hidden');
+
+        const transRes = await api(`/api/submissions/${sub.id}/transcribe`, {
+          method: 'POST',
+          body: JSON.stringify({ whisper_model: whisperModel })
+        });
+        const tr = transRes.transcription_result || {};
+        document.getElementById('spkTranscriptInput').value = tr.transcript_text || '';
+        if (tr.audio_metrics) {
+          document.getElementById('spkManualDuration').value = tr.audio_metrics.duration_seconds || 90;
+          updateSpkMetricsUI(tr.audio_metrics);
+        }
+      } catch (e) {
+        alert('Lỗi khi nhận diện giọng nói: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Chạy Whisper nhận diện giọng nói';
+      }
+    }
+
+    async function submitAndAssessSpeaking() {
+      const studentId = document.getElementById('spkStudentSelect').value;
+      const part = document.getElementById('spkPartSelect').value;
+      const promptText = document.getElementById('spkPromptInput').value.trim();
+      const transcriptText = document.getElementById('spkTranscriptInput').value.trim();
+      const manualDur = parseFloat(document.getElementById('spkManualDuration').value) || 90.0;
+
+      if (!studentId) return alert('Hãy chọn học viên trước!');
+      if (promptText.length < 5 || transcriptText.length < 15) return alert('Vui lòng có câu hỏi và nội dung Transcript trước khi chấm!');
+
+      const btn = document.getElementById('assessSpkBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang chấm Speaking bằng Qwen3 8B (~25-40s)...';
+
+      try {
+        if (!currentSpkSubmissionId) {
+          const created = await api('/api/submissions/speaking', {
+            method: 'POST',
+            body: JSON.stringify({
+              student_id: studentId,
+              task_type: part,
+              prompt_text: promptText,
+              transcript_text: transcriptText,
+              duration_seconds: manualDur
+            })
+          });
+          currentSpkSubmissionId = created.id;
+        } else {
+          await api(`/api/submissions/${currentSpkSubmissionId}/transcript`, {
+            method: 'PUT',
+            body: JSON.stringify({ transcript_text: transcriptText, duration_seconds: manualDur })
+          });
+        }
+
+        const assessed = await api(`/api/submissions/${currentSpkSubmissionId}/assess`, {
+          method: 'POST',
+          body: JSON.stringify({ model_name: 'qwen3:8b', think: false })
+        });
+        renderSpeakingAssessment(assessed, transcriptText);
+      } catch (e) {
+        alert('Lỗi khi chấm Speaking: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Chấm Speaking ngay (Qwen3 8B)';
+      }
+    }
+
+    function renderSpeakingAssessment(assessed, transcriptText) {
+      currentSpkSubmissionId = assessed.submission_id;
+      currentSpkAssessmentId = assessed.id;
+      currentSpkTranscriptRaw = transcriptText;
+
+      document.getElementById('emptySpkState').classList.add('hidden');
+      document.getElementById('spkResultBox').classList.remove('hidden');
+      document.getElementById('spkHighlightCard').classList.remove('hidden');
+      document.getElementById('spkPreviewBox').innerHTML = escapeHtml(transcriptText);
+
+      const fb = assessed.feedback_parsed || {};
+      const crit = fb.criteria || {};
+      if (fb.audio_metrics) updateSpkMetricsUI(fb.audio_metrics);
+
+      document.getElementById('spkRubricBadge').textContent = `${assessed.rubric_version} · ${assessed.model_name}`;
+      document.getElementById('scFC').textContent = crit.fluency_coherence?.estimated_band ?? assessed.task_response ?? '-';
+      document.getElementById('scSpkLR').textContent = crit.lexical_resource?.estimated_band ?? assessed.lexical ?? '-';
+      document.getElementById('scSpkGRA').textContent = crit.grammatical_range_accuracy?.estimated_band ?? assessed.grammar ?? '-';
+      document.getElementById('scPRON').textContent = crit.pronunciation?.estimated_band ?? assessed.coherence ?? '-';
+      document.getElementById('scSpkOverall').textContent = assessed.estimated_overall ?? '-';
+
+      document.getElementById('spkTeacherBandInput').value = assessed.teacher_overall ?? assessed.estimated_overall ?? 6.5;
+      document.getElementById('spkTeacherFeedbackInput').value = assessed.teacher_feedback || '';
+      document.getElementById('spkReviewSavedMsg').classList.add('hidden');
+
+      const val = fb.validation_summary || {};
+      const bench = fb.benchmark || {};
+      document.getElementById('spkValidationBanner').innerHTML =
+        `<b>Kiểm tra trích dẫn Transcript:</b> ${val.verified_quotes ?? 0}/${val.total_quotes_checked ?? 0} câu khớp 100% · <b>Tốc độ:</b> ${bench.elapsed_seconds ?? '-'}s (${bench.tokens_per_second ?? '-'} tok/s)`;
+
+      const critBox = document.getElementById('spkCriteriaDetailsBox');
+      critBox.innerHTML = '';
+      const labels = {
+        fluency_coherence: 'Fluency & Coherence (Độ trôi chảy, nhịp nói WPM & mạch ý)',
+        lexical_resource: 'Lexical Resource (Vốn từ giao tiếp, Idioms & Collocations)',
+        grammatical_range_accuracy: 'Grammatical Range & Accuracy (Cấu trúc câu nói & Ngữ pháp)',
+        pronunciation: 'Pronunciation (Gợi ý sơ bộ — Giáo viên nghe audio để chốt)'
+      };
+
+      for (const [key, title] of Object.entries(labels)) {
+        const c = crit[key] || {};
+        const sec = document.createElement('div');
+        sec.className = 'crit-section';
+        sec.innerHTML = `<div class="crit-title"><span>${title}</span><span>Band ${c.estimated_band ?? '-'}</span></div>`;
+        (c.evidence || []).forEach(ev => {
+          const item = document.createElement('div');
+          item.className = 'ev-item';
+          const verifiedTag = ev.quote_verified ? '<span style="color:var(--success);">[✓ Khớp transcript]</span>' : '<span style="color:#f87171;">[⚠ Lệch]</span>';
+          item.innerHTML = `
+            <div class="ev-quote">"${escapeHtml(ev.quote || '')}" ${verifiedTag} <span class="badge">${escapeHtml(ev.error_code || '')}</span></div>
+            <div>${escapeHtml(ev.issue || '')}</div>
+            <div class="ev-fix">→ Gợi ý nâng cấp: ${escapeHtml(ev.suggestion || '')}</div>
+          `;
+          item.onclick = () => highlightQuoteInBox('spkPreviewBox', currentSpkTranscriptRaw, ev.quote || '');
+          sec.appendChild(item);
+        });
+        critBox.appendChild(sec);
+      }
+    }
+
+    async function saveTeacherReview(mode) {
+      const isSpk = mode === 'speaking';
+      const subId = isSpk ? currentSpkSubmissionId : currentSubmissionId;
+      const assId = isSpk ? currentSpkAssessmentId : currentAssessmentId;
+      if (!subId) return;
+
+      const band = parseFloat(document.getElementById(isSpk ? 'spkTeacherBandInput' : 'teacherBandInput').value);
+      const feedback = document.getElementById(isSpk ? 'spkTeacherFeedbackInput' : 'teacherFeedbackInput').value.trim();
+
+      const res = await api(`/api/submissions/${subId}/review`, {
+        method: 'POST',
+        body: JSON.stringify({
+          assessment_id: assId,
+          teacher_overall: band,
+          teacher_feedback: feedback
+        })
+      });
+      const msg = document.getElementById(isSpk ? 'spkReviewSavedMsg' : 'reviewSavedMsg');
+      msg.textContent = `✓ Đã lưu điểm giáo viên chốt (Band ${res.teacher_overall}) vào hồ sơ học viên!`;
+      msg.classList.remove('hidden');
+      await loadStudentsList();
+    }
+
+    async function loadStudentProgress() {
+      const studentId = document.getElementById('progressStudentSelect').value;
+      if (!studentId) return;
+      const data = await api(`/api/students/${studentId}/progress`);
+
+      const errBox = document.getElementById('recurringErrorsBox');
+      if (data.recurring_errors && data.recurring_errors.length > 0) {
+        errBox.innerHTML = '<div style="font-size:0.88rem; color:var(--muted); margin-bottom:8px;">Thống kê các lỗi học viên hay mắc nhất (Writing & Speaking):</div>' +
+          data.recurring_errors.map(e => `<span class="badge" style="margin-right:8px; margin-bottom:6px; display:inline-block; background:var(--primary-soft); border:1px solid var(--primary);">${e.code}: ${e.error_count} lần (${e.description})</span>`).join('');
+      } else {
+        errBox.innerHTML = '<div style="color:var(--muted); font-size:0.88rem;">Chưa có thống kê lỗi cho học viên này.</div>';
+      }
+
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
+      (data.submissions_history || []).forEach(row => {
+        const tr = document.createElement('tr');
+        const dateStr = row.assessed_at ? new Date(row.assessed_at).toLocaleString('vi-VN') : new Date(row.created_at).toLocaleString('vi-VN');
+        const skillTag = row.skill === 'speaking' ? '🎙 SPEAKING' : '✍ WRITING';
+        tr.innerHTML = `
+          <td>${dateStr}</td>
+          <td><b>${skillTag}</b> · ${row.task_type.toUpperCase()}</td>
+          <td><span class="badge">${row.rubric_version || 'Chưa chấm'}</span></td>
+          <td>${row.task_response ?? '-'} / ${row.coherence ?? '-'} / ${row.lexical ?? '-'} / ${row.grammar ?? '-'}</td>
+          <td><b>${row.estimated_overall ?? '-'}</b></td>
+          <td style="color:var(--success); font-weight:700;">${row.teacher_overall ?? 'Chưa duyệt'}</td>
+          <td><div style="display:flex; gap:6px;">
+              <button class="btn btn-secondary" style="padding:4px 10px; font-size:0.8rem;" onclick="openSubmissionInLab('${row.submission_id}', '${row.assessment_id || ''}')">Mở lại</button>
+              <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="deleteSubmission('${row.submission_id}')">Xóa</button>
+            </div></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    
+    async function triggerBackup() {
+      try {
+        const res = await api('/api/system/backup', { method: 'POST' });
+        alert(`✓ Đã tạo bản sao lưu Database an toàn tại:\nF:\\ielts-copilot\\data\\backups\\${res.backup_created}`);
+      } catch (e) {
+        alert('Lỗi khi sao lưu Database: ' + e.message);
+      }
+    }
+
+    async function deleteCurrentStudent() {
+      const sel = document.getElementById('progressStudentSelect');
+      const studentId = sel.value;
+      if (!studentId) return alert('Chưa có học viên nào để xóa!');
+      const studentName = sel.options[sel.selectedIndex].text;
+      if (!confirm(`Bạn có chắc chắn muốn XÓA VĨNH VIỄN học viên "${studentName}" cùng toàn bộ bài viết, bài nói và file ghi âm của học viên này không?`)) {
+        return;
+      }
+      try {
+        const res = await api(`/api/students/${studentId}`, { method: 'DELETE' });
+        alert(`✓ Đã xóa học viên và dọn sạch ${res.removed_audio_files || 0} file ghi âm trên ổ đĩa!`);
+        document.getElementById('recurringErrorsBox').innerHTML = '<div style="color:var(--muted); font-size:0.88rem;">Chưa có học viên hoặc dữ liệu.</div>';
+        document.getElementById('historyTableBody').innerHTML = '';
+        await loadStudentsList();
+      } catch (e) {
+        alert('Lỗi khi xóa học viên: ' + e.message);
+      }
+    }
+
+    async function deleteSubmission(submissionId) {
+      if (!confirm('Bạn có chắc muốn xóa vĩnh viễn bài nộp này (kèm kết quả chấm và file ghi âm nếu có) không?')) {
+        return;
+      }
+      try {
+        await api(`/api/submissions/${submissionId}`, { method: 'DELETE' });
+        await loadStudentProgress();
+      } catch (e) {
+        alert('Lỗi khi xóa bài nộp: ' + e.message);
+      }
+    }
+
+    async function openSubmissionInLab(submissionId, assessmentId) {
+      const detail = await api(`/api/submissions/${submissionId}`);
+      const chosen = (detail.assessments || []).find(a => a.id === assessmentId) || (detail.assessments || [])[0];
+
+      if (detail.skill === 'speaking') {
+        switchTab('speaking');
+        document.getElementById('spkStudentSelect').value = detail.student_id;
+        document.getElementById('spkPartSelect').value = detail.task_type;
+        document.getElementById('spkPromptInput').value = detail.prompt_text;
+        document.getElementById('spkTranscriptInput').value = detail.transcript_text || '';
+        currentSpkSubmissionId = detail.id;
+        if (detail.source_audio_path) {
+          document.getElementById('spkAudioPlayer').src = `/api/submissions/${detail.id}/audio`;
+          document.getElementById('audioPlayerContainer').classList.remove('hidden');
+        } else {
+          document.getElementById('audioPlayerContainer').classList.add('hidden');
+        }
+        if (chosen) renderSpeakingAssessment(chosen, detail.transcript_text || '');
+      } else {
+        switchTab('writing');
+        document.getElementById('studentSelect').value = detail.student_id;
+        document.getElementById('taskTypeSelect').value = detail.task_type;
+        document.getElementById('promptInput').value = detail.prompt_text;
+        document.getElementById('essayInput').value = detail.response_text;
+        updateWordCount();
+        if (chosen) renderWritingAssessment(chosen, detail.response_text);
+      }
+    }
+
+    initApp();
+  
+    // ================= TEACHING STUDIO FRONTEND CONTROLLER =================
+    let currentStudioPlan = null;
+    let currentStudioStage = 1;
+    let studioDirty = false;
+    let studioAbortController = null;
+    let studioMaterialsCache = [];
+    let selectedMaterialIds = new Set();
+
+    function markStudioDirty() {
+      studioDirty = true;
+    }
+
+    function showStudioError(msg) {
+      const box = document.getElementById('studioErrorBanner');
+      if (!box) return;
+      if (!msg) {
+        box.classList.add('hidden');
+        box.textContent = '';
+      } else {
+        box.textContent = '⚠ ' + msg;
+        box.classList.remove('hidden');
+      }
+    }
+
+    function cancelStudioRequest() {
+      if (studioAbortController) {
+        studioAbortController.abort();
+        studioAbortController = null;
+      }
+      const cancelBtn = document.getElementById('studioCancelBtn');
+      if (cancelBtn) cancelBtn.classList.add('hidden');
+      showStudioError('Đã hủy yêu cầu sinh nội dung theo lệnh của Giáo viên.');
+    }
+
+    async function studioApi(path, options = {}) {
+      showStudioError('');
+      studioAbortController = new AbortController();
+      const cancelBtn = document.getElementById('studioCancelBtn');
+      if (cancelBtn && options.method && options.method !== 'GET') {
+        cancelBtn.classList.remove('hidden');
+      }
+      try {
+        const headers = options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' };
+        const resp = await fetch(path, {
+          headers,
+          signal: studioAbortController.signal,
+          ...options,
+        });
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+          throw new Error(typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail));
+        }
+        return await resp.json();
+      } finally {
+        if (cancelBtn) cancelBtn.classList.add('hidden');
+        studioAbortController = null;
+      }
+    }
+
+    function switchStudioStage(stageNum) {
+      currentStudioStage = stageNum;
+      for (let i = 1; i <= 7; i++) {
+        const panel = document.getElementById(`studio-stage-${i}`);
+        const btn = document.getElementById(`stBtn${i}`);
+        if (panel) panel.classList.toggle('hidden', i !== stageNum);
+        if (btn) btn.classList.toggle('active', i === stageNum);
+      }
+      if (stageNum === 6 && currentStudioPlan) {
+        initOrLoadCompanionSession();
+      }
+      if (stageNum === 7 && currentStudioPlan) {
+        prefillStage7Review();
+      }
+    }
+
+    async function initStudioTab() {
+      await syncStudioStudentsDropdown();
+      await loadStudioMaterialsList();
+      await loadStudioPlansList();
+    }
+
+    async function syncStudioStudentsDropdown() {
+      const sel = document.getElementById('studioStudentSelect');
+      if (!sel) return;
+      const data = await api('/api/students');
+      const students = data.students || [];
+      const prevVal = sel.value;
+      sel.innerHTML = '<option value="">-- Bài học chung (General Class / Không chọn học viên) --</option>';
+      students.forEach(s => {
+        sel.add(new Option(`${s.name} (Hiện tại: ${s.current_overall || 'Chưa chốt'} -> Target: ${s.target_overall || 7.0})`, s.id));
+      });
+      if (prevVal) sel.value = prevVal;
+      await onStudioStudentChange();
+    }
+
+    async function onStudioStudentChange() {
+      const sel = document.getElementById('studioStudentSelect');
+      const box = document.getElementById('stStudentHistoryPreview');
+      if (!sel || !box) return;
+      const studentId = sel.value;
+      if (!studentId) {
+        box.innerHTML = 'Đang chọn chế độ <b>Bài học chung (General Lesson)</b> — Học liệu sẽ bám sát mục tiêu bài học tiêu chuẩn.';
+        return;
+      }
+      try {
+        const prog = await api(`/api/students/${studentId}/progress`);
+        const st = prog.student || {};
+        if (st.current_overall) document.getElementById('stCurrentBandInput').value = st.current_overall;
+        if (st.target_overall) document.getElementById('stTargetBandInput').value = st.target_overall;
+        const errs = prog.recurring_errors || [];
+        const subs = prog.submissions_history || [];
+        const errBadges = errs.length
+          ? errs.map(e => `<span class="badge" style="margin-right:6px; background:var(--primary-soft); border:1px solid var(--primary);">${escapeHtml(e.code)}: ${e.error_count} lần</span>`).join('')
+          : 'Chưa có thống kê lỗi lặp lại.';
+        box.innerHTML = `
+          <div><b>Học viên:</b> ${escapeHtml(st.name)} · <b>Số bài đã nộp:</b> ${subs.length} bài</div>
+          <div style="margin-top:6px;"><b>Lỗi lặp lại trong SQLite:</b> ${errBadges}</div>
+          <div style="margin-top:6px;"><b>Ghi chú hồ sơ:</b> ${escapeHtml(st.notes || 'Chưa có ghi chú.')}</div>
+        `;
+      } catch (e) {
+        box.textContent = 'Không tải được lịch sử học viên: ' + e.message;
+      }
+    }
+
+    async function loadStudioMaterialsList() {
+      const box = document.getElementById('stMaterialListBox');
+      if (!box) return;
+      const data = await studioApi('/api/studio/materials');
+      studioMaterialsCache = data.materials || [];
+      if (studioMaterialsCache.length === 0) {
+        box.innerHTML = '<div style="color:var(--muted); font-size:0.84rem;">Chưa có tài liệu nào trong thư viện. Bạn có thể tải file .txt, .md, .docx, .pdf lên trên.</div>';
+        return;
+      }
+      box.innerHTML = studioMaterialsCache.map(m => {
+        const checked = selectedMaterialIds.has(m.id) ? 'checked' : '';
+        const secCount = (m.sections || []).length;
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px solid var(--border); font-size:0.85rem;">
+            <label style="display:flex; align-items:center; gap:8px; margin:0; cursor:pointer; color:var(--text);">
+              <input type="checkbox" ${checked} style="width:auto; margin:0;" onchange="toggleSelectStudioMaterial('${m.id}', this.checked)" />
+              <span><b>${escapeHtml(m.title)}</b> <span class="badge">${escapeHtml(m.source_filename)} · ${secCount} mục/trang</span></span>
+            </label>
+            <button class="btn btn-danger" style="padding:3px 8px; font-size:0.75rem;" onclick="deleteStudioMaterial('${m.id}')">Xóa</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleSelectStudioMaterial(id, isChecked) {
+      if (isChecked) selectedMaterialIds.add(id);
+      else selectedMaterialIds.delete(id);
+    }
+
+    async function uploadStudioMaterial() {
+      const fInput = document.getElementById('stMaterialFileInput');
+      if (!fInput.files || fInput.files.length === 0) return alert('Hãy chọn 1 file (.txt, .md, .docx, .pdf) trước!');
+      const fd = new FormData();
+      fd.append('file', fInput.files[0]);
+      fd.append('title', document.getElementById('stMaterialTitleInput').value.trim());
+      fd.append('skill', document.getElementById('stSkillSelect').value);
+      try {
+        const created = await studioApi('/api/studio/materials/upload', { method: 'POST', body: fd });
+        selectedMaterialIds.add(created.id);
+        fInput.value = '';
+        document.getElementById('stMaterialTitleInput').value = '';
+        await loadStudioMaterialsList();
+      } catch (e) {
+        showStudioError(e.message);
+      }
+    }
+
+    async function deleteStudioMaterial(matId) {
+      if (!confirm('Xóa tài liệu này khỏi thư viện cục bộ?')) return;
+      await studioApi(`/api/studio/materials/${matId}`, { method: 'DELETE' });
+      selectedMaterialIds.delete(matId);
+      await loadStudioMaterialsList();
+    }
+
+    async function loadStudioPlansList(selectId = null) {
+      const sel = document.getElementById('studioPlanSelect');
+      if (!sel) return;
+      const data = await studioApi('/api/studio/lesson-plans');
+      const plans = data.lesson_plans || [];
+      sel.innerHTML = '<option value="">-- Chọn Giáo án đã lưu hoặc Tạo mới --</option>';
+      plans.forEach(p => {
+        const stuLabel = p.student_name ? `HV: ${p.student_name}` : 'General';
+        sel.add(new Option(`${p.title} [${p.skill.toUpperCase()} · ${stuLabel} · ${p.generation_status}]`, p.id));
+      });
+      if (selectId) {
+        sel.value = selectId;
+        await onSelectStudioPlan();
+      } else if (plans.length > 0 && !currentStudioPlan) {
+        sel.value = plans[0].id;
+        await onSelectStudioPlan();
+      }
+    }
+
+    async function onSelectStudioPlan() {
+      const planId = document.getElementById('studioPlanSelect').value;
+      if (!planId) return;
+      const plan = await studioApi(`/api/studio/lesson-plans/${planId}`);
+      renderStudioPlanState(plan);
+    }
+
+    function resetNewStudioPlan() {
+      if (studioDirty && !confirm('Bạn có thay đổi chưa lưu. Bạn có chắc muốn tạo giáo án mới không?')) return;
+      currentStudioPlan = null;
+      studioDirty = false;
+      document.getElementById('studioPlanSelect').value = '';
+      document.getElementById('stTitleInput').value = '';
+      document.getElementById('stObjectivesInput').value = '';
+      document.getElementById('stRawPlanInput').value = '';
+      document.getElementById('stTeacherNotesInput').value = '';
+      document.getElementById('studioGenerationStatusBadge').textContent = 'Trạng thái: Soạn mới';
+      switchStudioStage(1);
+    }
+
+    async function deleteCurrentStudioPlan() {
+      if (!currentStudioPlan) return alert('Chưa chọn giáo án nào để xóa!');
+      if (!confirm(`Xóa vĩnh viễn giáo án "${currentStudioPlan.title}" cùng toàn bộ Playbook, Handout và Review của giáo án này?`)) return;
+      await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}`, { method: 'DELETE' });
+      currentStudioPlan = null;
+      studioDirty = false;
+      await loadStudioPlansList();
+      resetNewStudioPlan();
+    }
+
+    async function runStudioAnalyze() {
+      const btn = document.getElementById('stAnalyzeBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang phân tích Giáo án bằng AI cục bộ...';
+      try {
+        const objs = document.getElementById('stObjectivesInput').value.split('\n').map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+        const modelSel = document.getElementById('modelSelect');
+        const payload = {
+          raw_lesson_plan: document.getElementById('stRawPlanInput').value.trim(),
+          title: document.getElementById('stTitleInput').value.trim(),
+          objectives: objs,
+          skill: document.getElementById('stSkillSelect').value,
+          task_type: document.getElementById('stTaskTypeSelect').value,
+          student_id: document.getElementById('studioStudentSelect').value || null,
+          student_current_band: parseFloat(document.getElementById('stCurrentBandInput').value) || null,
+          student_target_band: parseFloat(document.getElementById('stTargetBandInput').value) || null,
+          duration_minutes: parseInt(document.getElementById('stDurationInput').value, 10) || 60,
+          teacher_notes: document.getElementById('stTeacherNotesInput').value.trim(),
+          source_material_ids: Array.from(selectedMaterialIds),
+          personalization_enabled: document.getElementById('stPersonalizeToggle').checked,
+          model_name: modelSel ? modelSel.value : 'qwen3:8b',
+          think: false,
+          force_regenerate: true
+        };
+        const plan = await studioApi('/api/studio/lesson-plans/analyze', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        studioDirty = false;
+        await loadStudioPlansList(plan.id);
+        renderStudioPlanState(plan);
+        switchStudioStage(2);
+      } catch (e) {
+        showStudioError(e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Phân tích & Chuẩn hóa Giáo án (Bước 1 → 2)';
+      }
+    }
+
+    function renderStudioPlanState(plan) {
+      currentStudioPlan = plan;
+      studioDirty = false;
+      document.getElementById('studioGenerationStatusBadge').textContent = `Trạng thái: ${plan.generation_status} (v${plan.version})`;
+
+      // Stage 1 sync
+      document.getElementById('stTitleInput').value = plan.title || '';
+      document.getElementById('stSkillSelect').value = plan.skill || 'writing';
+      document.getElementById('stTaskTypeSelect').value = plan.task_type || 'task2';
+      document.getElementById('studioStudentSelect').value = plan.student_id || '';
+      document.getElementById('stCurrentBandInput').value = plan.student_current_band ?? 6.0;
+      document.getElementById('stTargetBandInput').value = plan.student_target_band ?? 7.0;
+      document.getElementById('stDurationInput').value = plan.duration_minutes || 60;
+      document.getElementById('stObjectivesInput').value = (plan.learning_objectives || []).join('\n');
+      document.getElementById('stRawPlanInput').value = plan.raw_input_text || '';
+      document.getElementById('stTeacherNotesInput').value = plan.teacher_notes || '';
+      document.getElementById('stPersonalizeToggle').checked = Boolean(plan.personalization_enabled);
+
+      // Stage 2 sync
+      document.getElementById('revTitleInput').value = plan.title || '';
+      document.getElementById('revSkillSelect').value = plan.skill || 'writing';
+      document.getElementById('revTaskTypeInput').value = plan.task_type || 'task2';
+      document.getElementById('revDurationInput').value = plan.duration_minutes || 60;
+      document.getElementById('revObjectivesInput').value = (plan.learning_objectives || []).join('\n');
+      document.getElementById('revPrereqInput').value = (plan.prerequisite_knowledge || []).join('\n');
+      document.getElementById('revDiffInput').value = (plan.expected_difficulties || []).join('\n');
+      document.getElementById('revCriteriaInput').value = (plan.assessment_criteria || []).join('\n');
+      document.getElementById('revResourcesInput').value = (plan.available_resources || []).join('\n');
+      document.getElementById('stReviewStatusBadge').textContent = plan.teacher_reviewed ? '✓ Giáo viên đã duyệt' : 'Chờ Giáo viên duyệt';
+
+      const expBox = document.getElementById('revExplicitAssumedBox');
+      const expItems = plan.explicit_vs_assumed || [];
+      expBox.innerHTML = expItems.map(item => {
+        const isAssumed = item.status === 'assumed';
+        const badgeStyle = isAssumed ? 'background:#78350f; color:var(--warning);' : 'background:rgba(34,197,94,0.2); color:var(--success);';
+        return `<div style="padding:6px 10px; border-bottom:1px solid var(--border); font-size:0.84rem;">
+          <span class="badge" style="${badgeStyle}">${item.status.toUpperCase()}</span>
+          <b>${escapeHtml(item.field_name)}:</b> ${escapeHtml(item.rationale)}
+        </div>`;
+      }).join('') || '<div style="font-size:0.84rem; color:var(--muted);">Tất cả thông tin đều tường minh.</div>';
+
+      renderStage2PlannedActivities(plan.activities || []);
+      renderStage3Playbook(plan);
+      renderStage4Handout(plan);
+      renderStage5TeacherGuide(plan);
+      renderStage7Reviews(plan);
+    }
+
+    function renderStage2PlannedActivities(activities) {
+      const box = document.getElementById('revPlannedActivitiesBox');
+      box.innerHTML = '';
+      activities.forEach((act, idx) => {
+        const row = document.createElement('div');
+        row.className = 'planned-act-row';
+        row.style.cssText = 'background:var(--surface-subtle); border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:8px;';
+        const assumedTag = act.is_assumed ? '<span class="badge" style="background:#78350f; color:var(--warning);">AI Đề xuất (Assumed)</span>' : '<span class="badge">Explicit</span>';
+        row.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-weight:700; font-size:0.85rem;">Hoạt động #${idx + 1} ${assumedTag}</span>
+            <button class="btn btn-danger" style="padding:2px 8px; font-size:0.75rem;" onclick="this.parentElement.parentElement.remove(); markStudioDirty();">Xóa</button>
+          </div>
+          <div class="row-3" style="grid-template-columns:2fr 1fr 1fr; gap:8px;">
+            <input type="text" class="pa-title" value="${escapeHtml(act.title || '')}" placeholder="Tên hoạt động" style="margin:0;" oninput="markStudioDirty()" />
+            <input type="number" class="pa-dur" value="${act.duration_minutes || 15}" min="1" max="180" style="margin:0;" oninput="markStudioDirty()" />
+            <select class="pa-prio" style="margin:0;" onchange="markStudioDirty()">
+              <option value="essential" ${act.priority_level === 'essential' ? 'selected' : ''}>Essential (Cốt lõi)</option>
+              <option value="core" ${act.priority_level === 'core' ? 'selected' : ''}>Core (Chính)</option>
+              <option value="optional_extension" ${act.priority_level === 'optional_extension' ? 'selected' : ''}>Optional (Mở rộng)</option>
+            </select>
+          </div>
+          <input type="text" class="pa-obj" value="${escapeHtml(act.learning_objective || '')}" placeholder="Mục tiêu cụ thể của hoạt động này" style="margin-top:6px; margin-bottom:0;" oninput="markStudioDirty()" />
+        `;
+        box.appendChild(row);
+      });
+    }
+
+    function addPlannedActivityRow() {
+      const box = document.getElementById('revPlannedActivitiesBox');
+      const idx = box.querySelectorAll('.planned-act-row').length + 1;
+      const div = document.createElement('div');
+      div.className = 'planned-act-row';
+      div.style.cssText = 'background:var(--surface-subtle); border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:8px;';
+      div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-weight:700; font-size:0.85rem;">Hoạt động #${idx}</span>
+          <button class="btn btn-danger" style="padding:2px 8px; font-size:0.75rem;" onclick="this.parentElement.parentElement.remove(); markStudioDirty();">Xóa</button>
+        </div>
+        <div class="row-3" style="grid-template-columns:2fr 1fr 1fr; gap:8px;">
+          <input type="text" class="pa-title" value="Thực hành có hướng dẫn (Guided Practice)" style="margin:0;" />
+          <input type="number" class="pa-dur" value="15" min="1" max="180" style="margin:0;" />
+          <select class="pa-prio" style="margin:0;">
+            <option value="essential">Essential (Cốt lõi)</option>
+            <option value="core" selected>Core (Chính)</option>
+            <option value="optional_extension">Optional (Mở rộng)</option>
+          </select>
+        </div>
+        <input type="text" class="pa-obj" value="Vận dụng kỹ năng mục tiêu vào bài tập ngắn" style="margin-top:6px; margin-bottom:0;" />
+      `;
+      box.appendChild(div);
+      markStudioDirty();
+    }
+
+    async function saveReviewedLessonPlan(andGeneratePlaybook = false) {
+      if (!currentStudioPlan) return;
+      const rows = Array.from(document.querySelectorAll('#revPlannedActivitiesBox .planned-act-row'));
+      const planned_activities = rows.map(r => ({
+        title: r.querySelector('.pa-title').value.trim() || 'Activity',
+        duration_minutes: parseInt(r.querySelector('.pa-dur').value, 10) || 15,
+        priority_level: r.querySelector('.pa-prio').value,
+        learning_objective: r.querySelector('.pa-obj').value.trim() || 'Achieve lesson objective',
+        is_assumed: false
+      }));
+
+      const splitLines = id => document.getElementById(id).value.split('\n').map(s => s.trim()).filter(Boolean);
+      const payload = {
+        title: document.getElementById('revTitleInput').value.trim(),
+        skill: document.getElementById('revSkillSelect').value,
+        task_type: document.getElementById('revTaskTypeInput').value.trim(),
+        duration_minutes: parseInt(document.getElementById('revDurationInput').value, 10) || 60,
+        student_id: document.getElementById('studioStudentSelect').value || null,
+        student_current_band: parseFloat(document.getElementById('stCurrentBandInput').value) || null,
+        student_target_band: parseFloat(document.getElementById('stTargetBandInput').value) || null,
+        learning_objectives: splitLines('revObjectivesInput'),
+        prerequisite_knowledge: splitLines('revPrereqInput'),
+        planned_activities,
+        available_resources: splitLines('revResourcesInput'),
+        expected_difficulties: splitLines('revDiffInput'),
+        assessment_criteria: splitLines('revCriteriaInput'),
+        teacher_notes: document.getElementById('stTeacherNotesInput').value.trim(),
+        personalization_enabled: document.getElementById('stPersonalizeToggle').checked,
+        teacher_reviewed: true
+      };
+
+      const updated = await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}/review`, {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+      });
+      renderStudioPlanState(updated);
+      if (andGeneratePlaybook) {
+        switchStudioStage(3);
+        await generateStudioPlaybook(true);
+      } else {
+        showToast('Đã lưu bản duyệt giáo án');
+      }
+    }
+
+    async function generateStudioPlaybook(force = true) {
+      if (!currentStudioPlan) return;
+      const btn = document.getElementById('genPlaybookBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang sinh Teaching Playbook (~20-35s)...';
+      try {
+        const modelSel = document.getElementById('modelSelect');
+        const updated = await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}/playbook`, {
+          method: 'POST',
+          body: JSON.stringify({
+            model_name: modelSel ? modelSel.value : 'qwen3:8b',
+            think: false,
+            force_regenerate: force
+          })
+        });
+        renderStudioPlanState(updated);
+      } catch (e) {
+        showStudioError(e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sinh Playbook';
+      }
+    }
+
+    function renderStage3Playbook(plan) {
+      const pb = plan.playbook;
+      const banner = document.getElementById('pbDurationBanner');
+      const box = document.getElementById('pbActivitiesContainer');
+      const appText = document.getElementById('pbApproachText');
+
+      if (!pb) {
+        appText.textContent = 'Chưa sinh Teaching Playbook. Hãy bấm nút "Sinh Playbook" ở góc phải.';
+        banner.innerHTML = 'Chưa có dữ liệu kiểm tra thời lượng.';
+        box.innerHTML = '';
+        return;
+      }
+
+      appText.textContent = `Phương pháp sư phạm chủ đạo: ${pb.pedagogical_approach}`;
+      const dv = pb.duration_validation || {};
+      const recs = pb.time_shortening_recommendations || [];
+      if (dv.exceeds_available_time) {
+        banner.style.borderColor = 'var(--warning)';
+        banner.innerHTML = `<b style="color:var(--warning);">⚠ Cảnh báo vượt thời lượng (${dv.total_allocated_minutes}/${dv.lesson_duration_minutes} phút — lố ${dv.overflow_minutes} phút):</b><br/>` +
+          recs.map(r => `• ${escapeHtml(r)}`).join('<br/>');
+      } else {
+        banner.style.borderColor = 'var(--success)';
+        banner.innerHTML = `<b style="color:var(--success);">✓ Phân bổ thời gian hợp lệ:</b> Tổng ${dv.total_allocated_minutes}/${dv.lesson_duration_minutes} phút (Hoạt động: ${dv.activities_sum_minutes} phút + Chuyển tiếp/Phản hồi: ${dv.transition_buffer_minutes} phút).`;
+      }
+
+      box.innerHTML = (plan.activities || []).map(act => {
+        const exPairs = (act.examples_counterexamples || []).map(p =>
+          `<div style="margin-bottom:4px;"><b>Strong:</b> "${escapeHtml(p.strong_example)}" | <b>Weak:</b> "${escapeHtml(p.weak_counterexample)}" <i>(${escapeHtml(p.comparison_point)})</i></div>`
+        ).join('');
+        return `
+          <div class="card" style="background:var(--surface-subtle); margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;">
+              <div>
+                <span class="badge" style="background:var(--primary-soft); color:var(--primary);">Activity #${act.activity_order} · ${act.priority_level.toUpperCase()}</span>
+                <input type="text" id="actTitle_${act.id}" value="${escapeHtml(act.title)}" style="width:360px; display:inline-block; margin:0 8px; padding:6px 10px; font-weight:700;" />
+                <span>Thời lượng (phút):</span>
+                <input type="number" id="actDur_${act.id}" value="${act.duration_minutes}" style="width:75px; display:inline-block; margin:0; padding:6px;" />
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.8rem;" onclick="saveSinglePlaybookActivity('${act.id}')">Lưu</button>
+                <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.8rem; border:1px solid var(--primary); color:var(--primary);" onclick="regenerateSinglePlaybookActivity('${act.id}')">Tạo lại bằng AI</button>
+              </div>
+            </div>
+            <div style="font-size:0.86rem; color:var(--muted); margin-bottom:8px;"><b>Mục tiêu:</b> ${escapeHtml(act.learning_objective)} · <b>Lý do sư phạm:</b> ${escapeHtml(act.teaching_rationale || '')}</div>
+            <label>Hướng dẫn chi tiết cho Giáo viên (Exact Teacher Instructions — Có thể sửa trực tiếp)</label>
+            <textarea id="actInstr_${act.id}" rows="2">${escapeHtml(act.teacher_instructions || '')}</textarea>
+            <div class="grid-2" style="gap:12px; font-size:0.86rem;">
+              <div>
+                <div><b>Trình tự giảng giải:</b><br/>${(act.explanation_sequence || []).map((s, i) => `${i+1}. ${escapeHtml(s)}`).join('<br/>')}</div>
+                <div style="margin-top:8px;"><b>Ví dụ chuẩn vs. Phản ví dụ:</b><br/>${exPairs || 'Chưa có'}</div>
+                <div style="margin-top:8px;"><b>Câu hỏi kiểm tra (CCQs):</b><br/>${(act.teacher_questions || []).map(q => `• ${escapeHtml(q)}`).join('<br/>')}</div>
+                <div style="margin-top:8px;"><b>Câu trả lời kỳ vọng:</b><br/>${(act.expected_student_responses || []).map(r => `• ${escapeHtml(r)}`).join('<br/>')}</div>
+              </div>
+              <div>
+                <div><b>Lỗi/Ngộ nhận thường gặp:</b><br/>${(act.common_misconceptions || []).map(m => `• ${escapeHtml(m)}`).join('<br/>')}</div>
+                <div style="margin-top:8px;"><b>Cách kiểm tra mức độ hiểu bài:</b><br/>${(act.understanding_checks || []).map(u => `• ${escapeHtml(u)}`).join('<br/>')}</div>
+                <div style="margin-top:8px;"><b>Hỗ trợ học viên yếu (Scaffolding):</b> ${escapeHtml(act.scaffolding_struggling || '')}</div>
+                <div style="margin-top:8px;"><b>Mở rộng cho học viên khá (Extension):</b> ${escapeHtml(act.extension_fast_learners || '')}</div>
+                <div style="margin-top:8px;"><b>Chuyển tiếp sang hoạt động sau:</b> ${escapeHtml(act.transition_next || '')}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function saveSinglePlaybookActivity(actId) {
+      const title = document.getElementById(`actTitle_${actId}`).value.trim();
+      const duration_minutes = parseInt(document.getElementById(`actDur_${actId}`).value, 10) || 10;
+      const teacher_instructions = document.getElementById(`actInstr_${actId}`).value.trim();
+      const updated = await studioApi(`/api/studio/activities/${actId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ title, duration_minutes, teacher_instructions })
+      });
+      renderStudioPlanState(updated);
+      showToast('Đã lưu hoạt động & cập nhật thời lượng');
+    }
+
+    async function regenerateSinglePlaybookActivity(actId) {
+      const instr = prompt('Nhập yêu cầu chỉnh sửa cho hoạt động này (VD: Thêm ví dụ so sánh Band 6.0 và Band 7.5):', 'Làm rõ lời dẫn của giáo viên và thêm ví dụ thực tế');
+      if (instr === null) return;
+      const modelSel = document.getElementById('modelSelect');
+      const updated = await studioApi(`/api/studio/activities/${actId}/regenerate`, {
+        method: 'POST',
+        body: JSON.stringify({
+          teacher_instruction: instr,
+          model_name: modelSel ? modelSel.value : 'qwen3:8b'
+        })
+      });
+      renderStudioPlanState(updated);
+    }
+
+    async function generateStudioMaterials(force = true) {
+      if (!currentStudioPlan) return;
+      const btn = document.getElementById('genMaterialsBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang sinh Student Handout & Teacher Guide (~25-45s)...';
+      try {
+        const modelSel = document.getElementById('modelSelect');
+        const updated = await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}/materials`, {
+          method: 'POST',
+          body: JSON.stringify({
+            personalization_enabled: document.getElementById('hoPersonalizeCheck').checked,
+            custom_personalization_override: document.getElementById('hoCustomOverrideInput').value.trim(),
+            model_name: modelSel ? modelSel.value : 'qwen3:8b',
+            think: false,
+            force_regenerate: force
+          })
+        });
+        renderStudioPlanState(updated);
+      } catch (e) {
+        showStudioError(e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sinh Handout & Guide';
+      }
+    }
+
+    function renderStage4Handout(plan) {
+      const ho = plan.handout;
+      const sumBox = document.getElementById('hoPersonalizationSummary');
+      const exBox = document.getElementById('hoExercisesContainer');
+      const metaBox = document.getElementById('hoFooterMetaBox');
+
+      if (!ho) {
+        sumBox.textContent = 'Chưa sinh Student Handout. Hãy bấm nút "Sinh Handout & Guide".';
+        exBox.innerHTML = '';
+        metaBox.innerHTML = '';
+        return;
+      }
+
+      sumBox.textContent = ho.personalization_summary || 'Không áp dụng cá nhân hóa.';
+      document.getElementById('hoPersonalizeCheck').checked = Boolean(ho.personalization_applied);
+
+      exBox.innerHTML = (ho.exercises || []).map(ex => `
+        <div class="card" style="background:var(--surface-subtle); margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+            <div>
+              <span class="badge" style="background:var(--primary-soft); color:var(--primary);">Exercise #${ex.exercise_order} · ${ex.progression_stage.toUpperCase()} · ${ex.exercise_type}</span>
+              <input type="text" id="exTitle_${ex.id}" value="${escapeHtml(ex.title)}" style="width:340px; display:inline-block; margin:0 8px; padding:6px 10px; font-weight:700;" />
+              <span class="badge">${escapeHtml(ex.difficulty_level)}</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-secondary" style="padding:5px 10px; font-size:0.78rem;" onclick="saveSingleHandoutExercise('${ex.id}')">Lưu</button>
+              <button class="btn btn-secondary" style="padding:5px 10px; font-size:0.78rem;" onclick="regenerateSingleHandoutExercise('${ex.id}', 'easier')">Giảm độ khó</button>
+              <button class="btn btn-secondary" style="padding:5px 10px; font-size:0.78rem;" onclick="regenerateSingleHandoutExercise('${ex.id}', 'harder')">Tăng độ khó</button>
+            </div>
+          </div>
+          <div style="font-size:0.84rem; color:var(--muted); margin-bottom:6px;"><b>Mục tiêu:</b> ${escapeHtml(ex.learning_objective)} · <b>Định dạng trả lời:</b> ${escapeHtml(ex.expected_response_format)} (${ex.working_space_lines} dòng kẻ làm bài)</div>
+          <label>Hướng dẫn làm bài cho Học viên (Student Instructions)</label>
+          <textarea id="exInstr_${ex.id}" rows="2">${escapeHtml(ex.student_instructions)}</textarea>
+          <label>Nội dung câu hỏi / ngữ liệu bài tập (Mỗi câu 1 dòng — Không chứa đáp án)</label>
+          <textarea id="exItems_${ex.id}" rows="4">${escapeHtml((ex.content_items || []).join('\n'))}</textarea>
+        </div>
+      `).join('');
+
+      const checkItems = (ho.self_assessment_checklist || []).map(c => `<li>[ ] ${escapeHtml(c)}</li>`).join('');
+      metaBox.innerHTML = `
+        <div class="card" style="background:var(--surface-subtle);">
+          <h3 style="font-size:0.95rem; color:var(--primary); margin-bottom:6px;">Checklist Tự đánh giá & Bài tập về nhà trên Phiếu Học viên</h3>
+          <ul style="margin-left:18px; font-size:0.88rem; margin-bottom:10px;">${checkItems}</ul>
+          <div style="font-size:0.88rem;"><b>Exit Ticket:</b> ${escapeHtml(ho.exit_ticket_prompt || '')}</div>
+          <div style="font-size:0.88rem; margin-top:4px;"><b>Homework:</b> ${escapeHtml(ho.homework_assignment || '')}</div>
+        </div>
+      `;
+    }
+
+    async function saveSingleHandoutExercise(exId) {
+      const title = document.getElementById(`exTitle_${exId}`).value.trim();
+      const student_instructions = document.getElementById(`exInstr_${exId}`).value.trim();
+      const content_items = document.getElementById(`exItems_${exId}`).value.split('\n').map(s => s.trim()).filter(Boolean);
+      const updated = await studioApi(`/api/studio/exercises/${exId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ title, student_instructions, content_items })
+      });
+      renderStudioPlanState(updated);
+      showToast('Đã lưu bài tập Handout');
+    }
+
+    async function regenerateSingleHandoutExercise(exId, diff) {
+      const instr = prompt(`Nhập yêu cầu điều chỉnh bài tập này (Độ khó: ${diff}):`, `Điều chỉnh độ khó (${diff}) và giữ nguyên mục tiêu bài học`);
+      if (instr === null) return;
+      const modelSel = document.getElementById('modelSelect');
+      const updated = await studioApi(`/api/studio/exercises/${exId}/regenerate`, {
+        method: 'POST',
+        body: JSON.stringify({
+          teacher_instruction: instr,
+          difficulty_adjustment: diff,
+          model_name: modelSel ? modelSel.value : 'qwen3:8b'
+        })
+      });
+      renderStudioPlanState(updated);
+    }
+
+    function renderStage5TeacherGuide(plan) {
+      const tg = plan.teacher_guide;
+      const box = document.getElementById('tgAnswerKeysContainer');
+      const chkBox = document.getElementById('tgObjectiveChecklistBox');
+      if (!tg) {
+        box.innerHTML = '<div style="color:var(--muted);">Chưa sinh Teacher Guide. Hãy sinh bộ học liệu ở Bước 4 trước.</div>';
+        chkBox.innerHTML = '';
+        return;
+      }
+
+      box.innerHTML = (tg.answer_keys || []).map(k => `
+        <div class="card" style="background:var(--surface-subtle); margin-bottom:14px; border-left:4px solid var(--warning);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-weight:700; color:var(--warning);">Đáp án & Hướng dẫn chấm — Exercise #${k.exercise_order}: ${escapeHtml(k.exercise_title)}</span>
+            <button class="btn btn-secondary" style="padding:5px 12px; font-size:0.8rem;" onclick="saveTeacherKeyItem('${tg.id}', ${k.exercise_order})">Lưu đáp án</button>
+          </div>
+          <label>Đáp án đúng (Mỗi ý 1 dòng)</label>
+          <textarea id="tgAns_${k.exercise_order}" rows="2">${escapeHtml((k.correct_answers || []).join('\n'))}</textarea>
+          <label>Giải thích tại sao đáp án đúng & Gợi ý sửa lỗi (Explanation & Remediation)</label>
+          <textarea id="tgExp_${k.exercise_order}" rows="2">${escapeHtml(k.explanation_why || '')}</textarea>
+          <div class="grid-2" style="gap:10px;">
+            <div>
+              <label>Các phương án trả lời chấp nhận được khác (Alternative Acceptable Answers)</label>
+              <textarea id="tgAlt_${k.exercise_order}" rows="2">${escapeHtml((k.alternative_acceptable_answers || []).join('\n'))}</textarea>
+            </div>
+            <div>
+              <label>Tiêu chí chấm bài mở (Open-Ended Marking Criteria)</label>
+              <textarea id="tgCrit_${k.exercise_order}" rows="2">${escapeHtml((k.open_ended_marking_criteria || []).join('\n'))}</textarea>
+            </div>
+          </div>
+          <label>Đoạn văn / Câu trả lời mẫu minh họa <span class="badge" style="background:#78350f; color:var(--warning);">Illustrative LLM Example — Non-Official</span></label>
+          <textarea id="tgSample_${k.exercise_order}" rows="2">${escapeHtml(k.illustrative_sample_response || '')}</textarea>
+        </div>
+      `).join('');
+
+      chkBox.innerHTML = `
+        <div class="card" style="background:var(--surface-subtle);">
+          <h3 style="font-size:0.95rem; color:var(--warning); margin-bottom:8px;">Checklist Đánh giá Mục tiêu Bài học dành cho Giáo viên</h3>
+          <ul style="margin-left:18px; font-size:0.88rem;">
+            ${(tg.objective_evaluation_checklist || []).map(c => `<li>[ ] ${escapeHtml(c)}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    async function saveTeacherKeyItem(guideId, exOrder) {
+      const splitL = id => document.getElementById(id).value.split('\n').map(s => s.trim()).filter(Boolean);
+      const updated = await studioApi(`/api/studio/teacher-guides/${guideId}/answer-key`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          exercise_order: exOrder,
+          correct_answers: splitL(`tgAns_${exOrder}`),
+          explanation_why: document.getElementById(`tgExp_${exOrder}`).value.trim(),
+          alternative_acceptable_answers: splitL(`tgAlt_${exOrder}`),
+          open_ended_marking_criteria: splitL(`tgCrit_${exOrder}`),
+          illustrative_sample_response: document.getElementById(`tgSample_${exOrder}`).value.trim()
+        })
+      });
+      renderStudioPlanState(updated);
+      showToast(`Đã lưu đáp án Bài tập #${exOrder}`);
+    }
+
+    // Stage 6: Companion functions
+    async function initOrLoadCompanionSession() {
+      if (!currentStudioPlan) return;
+      const sess = await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}/session`, { method: 'POST' });
+      currentStudioPlan.session = sess;
+      renderStage6Companion();
+    }
+
+    function renderStage6Companion() {
+      if (!currentStudioPlan || !currentStudioPlan.session) return;
+      const sess = currentStudioPlan.session;
+      const acts = currentStudioPlan.activities || [];
+      document.getElementById('compElapsedInput').value = sess.elapsed_minutes ?? 0;
+      document.getElementById('compRemainingInput').value = sess.remaining_minutes ?? currentStudioPlan.duration_minutes;
+
+      const listBox = document.getElementById('compActivitiesListBox');
+      listBox.innerHTML = acts.map(a => {
+        const st = (sess.activity_states && sess.activity_states[a.id]) || a.status || 'not_started';
+        const isCurrent = sess.current_activity_id === a.id;
+        return `
+          <div style="padding:10px; border:1px solid ${isCurrent ? 'var(--primary)' : 'var(--border)'}; border-radius:8px; margin-bottom:8px; background:var(--surface-subtle);">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <span style="font-weight:700; cursor:pointer; color:${isCurrent ? 'var(--primary)' : 'var(--text)'};" onclick="selectCompanionActivity('${a.id}')">
+                #${a.activity_order}. ${escapeHtml(a.title)} (${a.duration_minutes}m)
+              </span>
+              <select style="width:145px; margin:0; padding:4px 8px; font-size:0.8rem;" onchange="changeCompanionActivityStatus('${a.id}', this.value)">
+                <option value="not_started" ${st === 'not_started' ? 'selected' : ''}>⏳ Chưa bắt đầu</option>
+                <option value="in_progress" ${st === 'in_progress' ? 'selected' : ''}>▶ Đang dạy</option>
+                <option value="completed" ${st === 'completed' ? 'selected' : ''}>✓ Đã hoàn thành</option>
+              </select>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const activeAct = acts.find(a => a.id === sess.current_activity_id) || acts[0];
+      const detailBox = document.getElementById('compActiveActivityDetail');
+      if (activeAct) {
+        detailBox.innerHTML = `
+          <div style="font-weight:700; color:var(--primary); font-size:1rem; margin-bottom:6px;">
+            Đang xem: #${activeAct.activity_order} — ${escapeHtml(activeAct.title)} (${activeAct.duration_minutes} phút)
+          </div>
+          <div style="margin-bottom:6px;"><b>Mục tiêu:</b> ${escapeHtml(activeAct.learning_objective)}</div>
+          <div style="margin-bottom:6px;"><b>Hướng dẫn Giáo viên:</b> ${escapeHtml(activeAct.teacher_instructions || '')}</div>
+          <div style="margin-bottom:6px;"><b>Câu hỏi gợi mở (CCQs):</b> ${(activeAct.teacher_questions || []).map(escapeHtml).join(' | ')}</div>
+          <div><b>Phản hồi kỳ vọng từ Học viên:</b> ${(activeAct.expected_student_responses || []).map(escapeHtml).join(' | ')}</div>
+        `;
+      }
+
+      const objBox = document.getElementById('compObjectivesStatusBox');
+      const objStates = sess.objective_statuses || {};
+      objBox.innerHTML = (currentStudioPlan.learning_objectives || []).map(obj => {
+        const val = objStates[obj] || 'not_yet_achieved';
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--border); font-size:0.85rem;">
+            <span>${escapeHtml(obj)}</span>
+            <select class="comp-obj-sel" data-obj="${escapeHtml(obj)}" style="width:165px; margin:0; padding:4px 8px; font-size:0.8rem;" onchange="saveCompanionSessionState()">
+              <option value="not_yet_achieved" ${val === 'not_yet_achieved' ? 'selected' : ''}>Chưa đạt</option>
+              <option value="partially_achieved" ${val === 'partially_achieved' ? 'selected' : ''}>Đạt một phần</option>
+              <option value="achieved" ${val === 'achieved' ? 'selected' : ''}>✓ Đã đạt</option>
+            </select>
+          </div>
+        `;
+      }).join('');
+
+      const notesBox = document.getElementById('compLiveNotesHistory');
+      notesBox.innerHTML = (sess.teacher_live_notes || []).map(n => `<div>• [${n.timestamp.slice(11,19)}] ${escapeHtml(n.note)}</div>`).join('');
+
+      renderCompanionAdaptations(sess.companion_adaptations || []);
+    }
+
+    async function selectCompanionActivity(actId) {
+      if (!currentStudioPlan || !currentStudioPlan.session) return;
+      const sess = await studioApi(`/api/studio/sessions/${currentStudioPlan.session.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ current_activity_id: actId })
+      });
+      currentStudioPlan.session = sess;
+      renderStage6Companion();
+    }
+
+    async function changeCompanionActivityStatus(actId, statusVal) {
+      if (!currentStudioPlan || !currentStudioPlan.session) return;
+      const sess = await studioApi(`/api/studio/sessions/${currentStudioPlan.session.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          current_activity_id: actId,
+          activity_states: { [actId]: statusVal }
+        })
+      });
+      currentStudioPlan.session = sess;
+      renderStage6Companion();
+    }
+
+    async function saveCompanionSessionState() {
+      if (!currentStudioPlan || !currentStudioPlan.session) return;
+      const objMap = {};
+      document.querySelectorAll('.comp-obj-sel').forEach(s => {
+        objMap[s.getAttribute('data-obj')] = s.value;
+      });
+      const sess = await studioApi(`/api/studio/sessions/${currentStudioPlan.session.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          elapsed_minutes: parseInt(document.getElementById('compElapsedInput').value, 10) || 0,
+          remaining_minutes: parseInt(document.getElementById('compRemainingInput').value, 10) || 60,
+          objective_statuses: objMap
+        })
+      });
+      currentStudioPlan.session = sess;
+      renderStage6Companion();
+    }
+
+    async function addCompanionLiveNote() {
+      if (!currentStudioPlan || !currentStudioPlan.session) return;
+      const note = document.getElementById('compQuickNoteInput').value.trim();
+      if (!note) return;
+      const sess = await studioApi(`/api/studio/sessions/${currentStudioPlan.session.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ new_live_note: note })
+      });
+      document.getElementById('compQuickNoteInput').value = '';
+      currentStudioPlan.session = sess;
+      renderStage6Companion();
+    }
+
+    async function triggerCompanionAction(scenario) {
+      if (!currentStudioPlan || !currentStudioPlan.session) {
+        await initOrLoadCompanionSession();
+      }
+      const sess = currentStudioPlan.session;
+      const modelSel = document.getElementById('modelSelect');
+      const rem = parseInt(document.getElementById('compRemainingInput').value, 10) || sess.remaining_minutes;
+      const ctx = document.getElementById('compContextInput').value.trim();
+      try {
+        await studioApi(`/api/studio/sessions/${sess.id}/companion`, {
+          method: 'POST',
+          body: JSON.stringify({
+            scenario,
+            activity_id: sess.current_activity_id,
+            student_response_or_context: ctx,
+            remaining_minutes: rem,
+            model_name: modelSel ? modelSel.value : 'qwen3:8b'
+          })
+        });
+        await initOrLoadCompanionSession();
+      } catch (e) {
+        showStudioError(e.message);
+      }
+    }
+
+    function renderCompanionAdaptations(adaptations) {
+      const box = document.getElementById('compAdaptationOutputBox');
+      if (!adaptations || adaptations.length === 0) {
+        box.innerHTML = '<div style="color:var(--muted); font-size:0.85rem;">Chưa có yêu cầu ứng biến nào trong phiên dạy này.</div>';
+        return;
+      }
+      box.innerHTML = adaptations.map(ad => `
+        <div style="background:var(--surface-subtle); border-left:4px solid var(--primary); padding:12px; border-radius:8px; margin-bottom:10px; font-size:0.88rem;">
+          <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">Tình huống: ${escapeHtml(ad.scenario.toUpperCase())}</div>
+          <div><b>Chẩn đoán / Lý do:</b> ${escapeHtml(ad.diagnosis_or_rationale)}</div>
+          <div style="margin-top:4px; color:var(--warning);"><b>Lời dẫn gợi ý cho Giáo viên:</b> ${escapeHtml(ad.teacher_script_or_explanation)}</div>
+          <div style="margin-top:4px; color:var(--success);"><b>Câu hỏi gợi mở / Chẩn đoán:</b> ${escapeHtml(ad.guided_diagnostic_question)}</div>
+          <div style="margin-top:4px;"><b>Bài tập / Nhiệm vụ điều chỉnh:</b> ${escapeHtml(ad.adapted_exercise_or_task)}</div>
+          ${(ad.schedule_adjustment_plan && ad.schedule_adjustment_plan.length) ? `<div style="margin-top:6px;"><b>Kế hoạch điều chỉnh thời lượng:</b><br/>${ad.schedule_adjustment_plan.map(s => `• ${escapeHtml(s)}`).join('<br/>')}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Stage 7: Post-Lesson Review
+    function prefillStage7Review() {
+      if (!currentStudioPlan) return;
+      const acts = currentStudioPlan.activities || [];
+      const sess = currentStudioPlan.session;
+      const completed = acts.filter(a => (sess && sess.activity_states && sess.activity_states[a.id] === 'completed') || a.status === 'completed').map(a => a.title);
+      document.getElementById('revCompletedActsInput').value = (completed.length ? completed : acts.map(a => a.title)).join('\n');
+      if (sess && sess.teacher_live_notes && sess.teacher_live_notes.length) {
+        document.getElementById('revStuDifficultiesInput').value = sess.teacher_live_notes.map(n => n.note).join('\n');
+      }
+      if (currentStudioPlan.handout && currentStudioPlan.handout.homework_assignment) {
+        document.getElementById('revHomeworkInput').value = currentStudioPlan.handout.homework_assignment;
+      }
+    }
+
+    async function submitPostLessonReview() {
+      if (!currentStudioPlan) return;
+      const btn = document.getElementById('savePostReviewBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang lưu Tổng kết & Sinh đề xuất buổi học tiếp theo...';
+      try {
+        const splitL = id => document.getElementById(id).value.split('\n').map(s => s.trim()).filter(Boolean);
+        const sess = currentStudioPlan.session;
+        const objMap = (sess && sess.objective_statuses) ? sess.objective_statuses : {};
+        const normObjMap = {};
+        for (const [k, v] of Object.entries(objMap)) {
+          normObjMap[k] = v === 'not_yet_achieved' ? 'not_achieved' : v;
+        }
+        const modelSel = document.getElementById('modelSelect');
+        await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}/reviews`, {
+          method: 'POST',
+          body: JSON.stringify({
+            session_id: sess ? sess.id : null,
+            completed_activities: splitL('revCompletedActsInput'),
+            objectives_achieved: normObjMap,
+            student_difficulties: splitL('revStuDifficultiesInput'),
+            exercises_too_easy: document.getElementById('revTooEasyInput').value.split(',').map(s => s.trim()).filter(Boolean),
+            exercises_too_hard: document.getElementById('revTooHardInput').value.split(',').map(s => s.trim()).filter(Boolean),
+            teacher_confirmed_notes: document.getElementById('revTeacherNotesFinalInput').value.trim() || 'Đã hoàn thành nội dung bài học.',
+            homework_assigned: document.getElementById('revHomeworkInput').value.trim(),
+            recommended_next_focus: document.getElementById('revNextFocusInput').value.trim(),
+            confirm_update_student_history: document.getElementById('revConfirmHistoryCheck').checked,
+            model_name: modelSel ? modelSel.value : 'qwen3:8b'
+          })
+        });
+        const updated = await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}`);
+        renderStudioPlanState(updated);
+        await loadStudentsList();
+      } catch (e) {
+        showStudioError(e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✓ Lưu Tổng kết Buổi học & Sinh Đề xuất Tiếp theo';
+      }
+    }
+
+    function renderStage7Reviews(plan) {
+      const box = document.getElementById('postLessonReviewsContainer');
+      const revs = plan.reviews || [];
+      if (revs.length === 0) {
+        box.innerHTML = '<div style="color:var(--muted); font-size:0.88rem;">Chưa có bản tổng kết nào cho giáo án này.</div>';
+        return;
+      }
+      box.innerHTML = revs.map(r => {
+        const ai = r.ai_hypotheses_summary || {};
+        const confirmedBadge = r.teacher_confirmed_history_update
+          ? '<span class="badge online">✓ Đã cập nhật vào Lịch sử Học viên (Teacher Confirmed)</span>'
+          : `<button class="btn btn-success" style="padding:4px 10px; font-size:0.78rem;" onclick="confirmReviewHistoryUpdate('${r.id}')">Xác nhận cập nhật vào Hồ sơ Học viên</button>`;
+        return `
+          <div style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:12px; font-size:0.88rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <b>Bản Tổng kết (${new Date(r.created_at).toLocaleString('vi-VN')})</b>
+              ${confirmedBadge}
+            </div>
+            <div style="padding:10px; border-left:4px solid var(--success); background:var(--success-soft); margin-bottom:10px;">
+              <div style="font-weight:700; color:var(--success);">1. Ghi nhận Chính thức của Giáo viên (Teacher-Confirmed Observations):</div>
+              <div><b>Nhận xét của GV:</b> ${escapeHtml(r.teacher_confirmed_notes)}</div>
+              <div><b>Khó khăn thực tế:</b> ${(r.student_difficulties || []).map(escapeHtml).join('; ') || 'Không có'}</div>
+              <div><b>BTVN đã giao:</b> ${escapeHtml(r.homework_assigned || '')}</div>
+              <div><b>Trọng tâm buổi tới:</b> ${escapeHtml(r.recommended_next_focus || '')}</div>
+            </div>
+            <div style="padding:10px; border-left:4px solid var(--warning); background:var(--warning-soft);">
+              <div style="font-weight:700; color:var(--warning);">2. Giả thuyết & Đề xuất của AI (AI-Generated Hypotheses — Lưu tách biệt):</div>
+              <div><b>Tóm tắt:</b> ${escapeHtml(ai.concise_lesson_summary || '')}</div>
+              <div><b>Giả thuyết nguyên nhân:</b> ${(ai.hypothesized_root_causes || []).map(escapeHtml).join('; ')}</div>
+              <div><b>Bước tiếp theo đề xuất:</b> ${(ai.proposed_next_steps || []).map(escapeHtml).join('; ')}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function confirmReviewHistoryUpdate(reviewId) {
+      await studioApi(`/api/studio/reviews/${reviewId}/confirm-history`, { method: 'POST' });
+      const updated = await studioApi(`/api/studio/lesson-plans/${currentStudioPlan.id}`);
+      renderStudioPlanState(updated);
+      await loadStudentsList();
+      showToast('Đã cập nhật vào Hồ sơ học viên');
+    }
+
+    function exportStudioDoc(docType, fmt) {
+      if (!currentStudioPlan) return alert('Hãy chọn hoặc tạo Giáo án trước khi xuất file!');
+      const url = `/api/studio/lesson-plans/${currentStudioPlan.id}/export/${docType}?fmt=${fmt}`;
+      window.open(url, '_blank');
+    }
+
+    // Override switchTab to seamlessly support 4 tabs (writing, speaking, students, studio)
+    window.switchTab = function(tab) {
+      ['writing', 'speaking', 'students', 'studio'].forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if (el) el.classList.toggle('hidden', t !== tab);
+      });
+      document.querySelectorAll('header .nav-tabs .tab-btn').forEach(btn => {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        btn.classList.toggle('active', onclickAttr.includes(`'${tab}'`));
+      });
+      if (tab === 'students' && typeof loadStudentProgress === 'function') loadStudentProgress();
+      if (tab === 'studio') initStudioTab();
+    };
+
+  
+    // ================= EXPERT UI OVERRIDES: THEME, TOAST & ACCORDION RENDERERS =================
+    function showToast(msg) {
+      const t = document.getElementById('uiToast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    function toggleUiTheme() {
+      const root = document.documentElement;
+      const curr = root.getAttribute('data-theme') || 'light';
+      const next = curr === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('ielts_copilot_theme', next);
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) btn.textContent = next === 'dark' ? 'Giao diện: Tối' : 'Giao diện: Sáng';
+    }
+
+    (function initSavedTheme() {
+      const saved = localStorage.getItem('ielts_copilot_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+      window.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) btn.textContent = saved === 'dark' ? 'Giao diện: Tối' : 'Giao diện: Sáng';
+      });
+    })();
+
+    function toggleAllAccordions(containerId, openState) {
+      const box = document.getElementById(containerId);
+      if (!box) return;
+      box.querySelectorAll('details.ui-accordion').forEach(d => { d.open = openState; });
+    }
+
+    renderStage3Playbook = function(plan) {
+      const pb = plan.playbook;
+      const banner = document.getElementById('pbDurationBanner');
+      const box = document.getElementById('pbActivitiesContainer');
+      const appText = document.getElementById('pbApproachText');
+
+      if (!pb) {
+        appText.textContent = 'Chưa sinh Teaching Playbook. Bấm "Sinh Playbook" ở góc phải để bắt đầu.';
+        banner.innerHTML = 'Chưa có dữ liệu kiểm tra thời lượng.';
+        box.innerHTML = '';
+        return;
+      }
+
+      appText.textContent = `Chiến lược sư phạm: ${pb.pedagogical_approach}`;
+      const dv = pb.duration_validation || {};
+      const recs = pb.time_shortening_recommendations || [];
+      if (dv.exceeds_available_time) {
+        banner.style.borderColor = 'var(--warning)';
+        banner.innerHTML = `<b style="color:var(--warning);">Cảnh báo vượt thời lượng (${dv.total_allocated_minutes}/${dv.lesson_duration_minutes} phút — vượt ${dv.overflow_minutes} phút):</b><br/>` +
+          recs.map(r => `• ${escapeHtml(r)}`).join('<br/>');
+      } else {
+        banner.style.borderColor = 'var(--border)';
+        banner.innerHTML = `<b style="color:var(--success);">Phân bổ thời gian chuẩn:</b> Tổng ${dv.total_allocated_minutes}/${dv.lesson_duration_minutes} phút (Hoạt động: ${dv.activities_sum_minutes} phút + Chuyển tiếp: ${dv.transition_buffer_minutes} phút).`;
+      }
+
+      const controls = `<div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="toggleAllAccordions('pbActivitiesContainer', true)">Mở rộng tất cả</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAllAccordions('pbActivitiesContainer', false)">Thu gọn tất cả</button>
+      </div>`;
+
+      box.innerHTML = controls + (plan.activities || []).map((act, idx) => {
+        const exPairs = (act.examples_counterexamples || []).map(p =>
+          `<div style="margin-bottom:6px;"><span class="badge explicit">Strong</span> "${escapeHtml(p.strong_example)}"<br/><span class="badge assumed">Weak</span> "${escapeHtml(p.weak_counterexample)}" <span style="color:var(--muted);">(${escapeHtml(p.comparison_point)})</span></div>`
+        ).join('');
+        return `
+          <details class="ui-accordion" ${idx === 0 ? 'open' : ''}>
+            <summary>
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <span class="badge">Hoạt động ${act.activity_order}</span>
+                <span>${escapeHtml(act.title)}</span>
+                <span class="badge">${act.duration_minutes} phút</span>
+                <span class="badge">${escapeHtml(act.priority_level)}</span>
+              </div>
+              <span style="font-size:0.78rem; color:var(--muted);">Bấm để đóng/mở chi tiết</span>
+            </summary>
+            <div class="acc-body">
+              <div class="row-3" style="grid-template-columns: 2.2fr 0.8fr auto; align-items:end; margin-bottom:10px;">
+                <div>
+                  <label>Tiêu đề hoạt động</label>
+                  <input type="text" id="actTitle_${act.id}" value="${escapeHtml(act.title)}" style="margin:0;" />
+                </div>
+                <div>
+                  <label>Thời lượng (phút)</label>
+                  <input type="number" id="actDur_${act.id}" value="${act.duration_minutes}" style="margin:0;" />
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-secondary btn-sm" onclick="saveSinglePlaybookActivity('${act.id}')">Lưu</button>
+                  <button class="btn btn-secondary btn-sm" onclick="regenerateSinglePlaybookActivity('${act.id}')">Tạo lại mục này</button>
+                </div>
+              </div>
+              <div style="font-size:0.84rem; color:var(--muted); margin-bottom:10px;">
+                <b>Mục tiêu:</b> ${escapeHtml(act.learning_objective)} · <b>Lý do sư phạm:</b> ${escapeHtml(act.teaching_rationale || '')}
+              </div>
+              <label>Lời dẫn & Hướng dẫn chi tiết cho Giáo viên</label>
+              <textarea id="actInstr_${act.id}" rows="2">${escapeHtml(act.teacher_instructions || '')}</textarea>
+              <div class="meta-grid-2">
+                <div class="info-block">
+                  <b>Trình tự giảng giải</b>
+                  ${(act.explanation_sequence || []).map((s, i) => `${i+1}.${escapeHtml(s)}`).join('<br/>')}
+                </div>
+                <div class="info-block">
+                  <b>Ví dụ chuẩn vs. Phản ví dụ</b>
+                  ${exPairs || 'Chưa có'}
+                </div>
+                <div class="info-block">
+                  <b>Câu hỏi kiểm tra (CCQs) & Đáp án kỳ vọng</b>
+                  ${(act.teacher_questions || []).map(q => `• Q: ${escapeHtml(q)}`).join('<br/>')}<br/>
+                  ${(act.expected_student_responses || []).map(r => `→ A: ${escapeHtml(r)}`).join('<br/>')}
+                </div>
+                <div class="info-block">
+                  <b>Ngộ nhận thường gặp & Phân hóa học viên</b>
+                  <b>Ngộ nhận:</b> ${(act.common_misconceptions || []).map(escapeHtml).join('; ')}<br/>
+                  <b>Scaffolding (Học viên yếu):</b> ${escapeHtml(act.scaffolding_struggling || '')}<br/>
+                  <b>Extension (Học viên khá):</b> ${escapeHtml(act.extension_fast_learners || '')}
+                </div>
+              </div>
+            </div>
+          </details>
+        `;
+      }).join('');
+    };
+
+    renderStage4Handout = function(plan) {
+      const ho = plan.handout;
+      const sumBox = document.getElementById('hoPersonalizationSummary');
+      const exBox = document.getElementById('hoExercisesContainer');
+      const metaBox = document.getElementById('hoFooterMetaBox');
+
+      if (!ho) {
+        sumBox.textContent = 'Chưa sinh Student Handout. Bấm "Sinh Handout & Guide" để tạo.';
+        exBox.innerHTML = '';
+        metaBox.innerHTML = '';
+        return;
+      }
+
+      sumBox.textContent = ho.personalization_summary || 'Không áp dụng cá nhân hóa.';
+      document.getElementById('hoPersonalizeCheck').checked = Boolean(ho.personalization_applied);
+
+      const controls = `<div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="toggleAllAccordions('hoExercisesContainer', true)">Mở rộng tất cả</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAllAccordions('hoExercisesContainer', false)">Thu gọn tất cả</button>
+      </div>`;
+
+      exBox.innerHTML = controls + (ho.exercises || []).map((ex, idx) => `
+        <details class="ui-accordion" ${idx === 0 ? 'open' : ''}>
+          <summary>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span class="badge">Bài tập ${ex.exercise_order}</span>
+              <span>${escapeHtml(ex.title)}</span>
+              <span class="badge">${escapeHtml(ex.progression_stage)}</span>
+              <span class="badge">${escapeHtml(ex.difficulty_level)}</span>
+            </div>
+            <span style="font-size:0.78rem; color:var(--muted);">Bấm để chỉnh sửa</span>
+          </summary>
+          <div class="acc-body">
+            <div style="display:flex; justify-content:space-between; align-items:end; gap:10px; margin-bottom:10px;">
+              <div style="flex:1;">
+                <label>Tiêu đề bài tập</label>
+                <input type="text" id="exTitle_${ex.id}" value="${escapeHtml(ex.title)}" style="margin:0;" />
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary btn-sm" onclick="saveSingleHandoutExercise('${ex.id}')">Lưu</button>
+                <button class="btn btn-secondary btn-sm" onclick="regenerateSingleHandoutExercise('${ex.id}', 'easier')">Giảm độ khó</button>
+                <button class="btn btn-secondary btn-sm" onclick="regenerateSingleHandoutExercise('${ex.id}', 'harder')">Tăng độ khó</button>
+              </div>
+            </div>
+            <div style="font-size:0.82rem; color:var(--muted); margin-bottom:8px;">
+              <b>Mục tiêu:</b> ${escapeHtml(ex.learning_objective)} · <b>Định dạng trả lời:</b> ${escapeHtml(ex.expected_response_format)}
+            </div>
+            <label>Hướng dẫn dành cho Học viên (Student Instructions)</label>
+            <textarea id="exInstr_${ex.id}" rows="2">${escapeHtml(ex.student_instructions)}</textarea>
+            <label>Ngữ liệu câu hỏi (Mỗi câu 1 dòng — Không chứa đáp án)</label>
+            <textarea id="exItems_${ex.id}" rows="3" style="margin-bottom:0;">${escapeHtml((ex.content_items || []).join('\n'))}</textarea>
+          </div>
+        </details>
+      `).join('');
+
+      const checkItems = (ho.self_assessment_checklist || []).map(c => `<li>[ ] ${escapeHtml(c)}</li>`).join('');
+      metaBox.innerHTML = `
+        <div class="info-block" style="margin-top:12px;">
+          <b>Checklist Tự đánh giá & Bài tập về nhà</b>
+          <ul style="margin-left:16px; margin-bottom:8px;">${checkItems}</ul>
+          <div><b>Exit Ticket:</b> ${escapeHtml(ho.exit_ticket_prompt || '')}</div>
+          <div style="margin-top:4px;"><b>Homework:</b> ${escapeHtml(ho.homework_assignment || '')}</div>
+        </div>
+      `;
+    };
+
+    renderStage5TeacherGuide = function(plan) {
+      const tg = plan.teacher_guide;
+      const box = document.getElementById('tgAnswerKeysContainer');
+      const chkBox = document.getElementById('tgObjectiveChecklistBox');
+      if (!tg) {
+        box.innerHTML = '<div style="color:var(--muted);">Chưa sinh Teacher Guide. Hãy sinh bộ học liệu ở Bước 4 trước.</div>';
+        chkBox.innerHTML = '';
+        return;
+      }
+
+      const controls = `<div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="toggleAllAccordions('tgAnswerKeysContainer', true)">Mở rộng tất cả</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleAllAccordions('tgAnswerKeysContainer', false)">Thu gọn tất cả</button>
+      </div>`;
+
+      box.innerHTML = controls + (tg.answer_keys || []).map((k, idx) => `
+        <details class="ui-accordion" ${idx === 0 ? 'open' : ''}>
+          <summary>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="badge assumed">Đáp án Bài ${k.exercise_order}</span>
+              <span>${escapeHtml(k.exercise_title)}</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); saveTeacherKeyItem('${tg.id}', ${k.exercise_order})">Lưu đáp án</button>
+          </summary>
+          <div class="acc-body">
+            <label>Đáp án chuẩn (Mỗi ý 1 dòng)</label>
+            <textarea id="tgAns_${k.exercise_order}" rows="2">${escapeHtml((k.correct_answers || []).join('\n'))}</textarea>
+            <label>Giải thích lý do & Gợi ý sửa lỗi cho học viên</label>
+            <textarea id="tgExp_${k.exercise_order}" rows="2">${escapeHtml(k.explanation_why || '')}</textarea>
+            <div class="grid-2" style="gap:10px;">
+              <div>
+                <label>Phương án chấp nhận được khác</label>
+                <textarea id="tgAlt_${k.exercise_order}" rows="2">${escapeHtml((k.alternative_acceptable_answers || []).join('\n'))}</textarea>
+              </div>
+              <div>
+                <label>Tiêu chí chấm bài mở</label>
+                <textarea id="tgCrit_${k.exercise_order}" rows="2">${escapeHtml((k.open_ended_marking_criteria || []).join('\n'))}</textarea>
+              </div>
+            </div>
+            <label>Câu trả lời mẫu minh họa <span class="badge assumed">Illustrative LLM Example — Non-Official</span></label>
+            <textarea id="tgSample_${k.exercise_order}" rows="2" style="margin-bottom:0;">${escapeHtml(k.illustrative_sample_response || '')}</textarea>
+          </div>
+        </details>
+      `).join('');
+
+      chkBox.innerHTML = `
+        <div class="info-block">
+          <b>Checklist Đánh giá Mục tiêu Bài học (Dành cho Giáo viên)</b>
+          <ul style="margin-left:16px;">
+            ${(tg.objective_evaluation_checklist || []).map(c => `<li>[ ] ${escapeHtml(c)}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    };
+
+  </script>
+  <div id="uiToast"></div>
+</body>
+</html>

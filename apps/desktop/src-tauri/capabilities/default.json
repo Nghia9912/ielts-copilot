@@ -1,0 +1,9 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Minimal capabilities for local offline IELTS Copilot teacher desktop app",
+  "windows": ["main"],
+  "permissions": [
+    "core:default"
+  ]
+}
