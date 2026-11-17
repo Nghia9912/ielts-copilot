@@ -41,6 +41,7 @@ ielts-copilot/
 ├── tests/                  # Automated Teaching Studio test suite (12 suites)
 ├── Start_IELTS_Copilot.bat # One-click Windows launcher
 └── requirements.txt        # Python dependencies
+```
 Setup & Usage (Windows)
 1. Prerequisites
 Python 3.11+
