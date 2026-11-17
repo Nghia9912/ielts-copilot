@@ -30,39 +30,50 @@ A 100% offline, privacy-preserving IELTS Teaching Assistant built for local exec
 ielts-copilot/
 ├── apps/
 │   ├── backend/app/
-│   │   ├── api/            # FastAPI routes (Core + Teaching Studio)
-│   │   ├── core/           # Paths and runtime config
-│   │   ├── db/             # SQLite schema & Teaching Studio migrations
-│   │   ├── prompts/        # Calibrated Writing & Teaching Studio prompts
-│   │   ├── repositories/   # SQLite persistence layer
-│   │   ├── schemas/        # Pydantic models
-│   │   └── services/       # Ollama, Faster-Whisper, Writing, Studio Engine & Exporter
-│   └── desktop/            # Single-page UI (Light/Dark theme) & Tauri config
-├── tests/                  # Automated Teaching Studio test suite (12 suites)
-├── Start_IELTS_Copilot.bat # One-click Windows launcher
-└── requirements.txt        # Python dependencies
-Setup & Usage (Windows)
-1. Prerequisites
-Python 3.11+
+│   │   ├── api/                # FastAPI routes (Core + Teaching Studio)
+│   │   ├── core/               # Paths and runtime config
+│   │   ├── db/                 # SQLite schema & Teaching Studio migrations
+│   │   ├── prompts/            # Calibrated Writing & Teaching Studio prompts
+│   │   ├── repositories/       # SQLite persistence layer
+│   │   ├── schemas/            # Pydantic models
+│   │   └── services/           # Ollama, Faster-Whisper, Writing, Studio Engine & Exporter
+│   └── desktop/                # Single-page UI (Light/Dark theme) & Tauri config
+├── tests/                      # Automated Teaching Studio test suite (12 suites)
+├── Start_IELTS_Copilot.bat     # One-click Windows launcher
+└── requirements.txt            # Python dependencies
+```
 
-Ollama installed with local models:
+## Setup & Usage (Windows)
 
-PowerShell
+### 1. Prerequisites
+- **Python 3.11+**
+- **[Ollama](https://ollama.com/)** installed with local models:
+
+```powershell
 ollama pull qwen3:8b
 ollama pull gemma3:4b
-2. Install Dependencies
-PowerShell
+```
+
+### 2. Install Dependencies
+
+```powershell
 python -m venv .venv
 .\.venv\Scripts\pip.exe install -r requirements.txt
-3. Run the Application
-Double-click Start_IELTS_Copilot.bat or run manually from PowerShell:
+```
 
-PowerShell
+### 3. Run the Application
+Double-click `Start_IELTS_Copilot.bat` or run manually from PowerShell:
+
+```powershell
 $env:PYTHONPATH = "apps\backend"
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
-Open http://127.0.0.1:8000 in your browser.
+```
 
-4. Run Tests
-PowerShell
+Open `[http://127.0.0.1:8000](http://127.0.0.1:8000)` in your browser.
+
+### 4. Run Tests
+
+```powershell
 $env:PYTHONPATH = "apps\backend"
 .\.venv\Scripts\python.exe tests\test_teaching_studio.py
+```
